@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Products - Lakshika Jewellers</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .product-card-admin:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+    </style>
+</head>
+<body class="bg-gray-900 text-gray-200 flex">
+
+    <!-- Sidebar Navigation -->
+    <aside class="w-64 bg-gray-800 p-4 flex flex-col fixed h-full z-20">
+        <div class="flex items-center mb-8">
+            <img src="logo.jfif" alt="Lakshika Jewellers Logo" class="w-12 h-12 mr-2 rounded-full object-cover">
+            <h1 class="text-xl font-bold text-white">Lakshika Jewellers</h1>
+        </div>
+        <nav class="flex-grow">
+            <ul>
+                <!-- Link back to your main dashboard -->
+                <li><a href="index.html" class="nav-link flex items-center py-3 px-4 rounded-lg transition duration-200 hover:bg-gray-700"><i class="fas fa-tachometer-alt w-6 mr-2"></i> Dashboard</a></li>
+                <!-- Current Page -->
+                <li><a href="#" class="nav-link active bg-yellow-400 text-gray-900 flex items-center py-3 px-4 rounded-lg"><i class="fas fa-gem w-6 mr-2"></i> Products</a></li>
+            </ul>
+        </nav>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="ml-64 flex-1 p-8">
+        <div class="flex justify-between items-center mb-8">
+            <h2 class="text-3xl font-bold text-yellow-400">Manage Products</h2>
+            <button id="add-product-btn" class="bg-yellow-400 text-gray-900 font-bold py-2 px-4 rounded-lg hover:bg-yellow-300 transition duration-200 flex items-center">
+                <i class="fas fa-plus mr-2"></i> Add New Product
+            </button>
+        </div>
+
+        <!-- Products Grid -->
+        <div id="products-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <!-- Example Product Card (JS will generate these) -->
+            <div class="product-card-admin bg-gray-800 rounded-lg shadow-lg overflow-hidden flex flex-col">
+                <img src="https://placehold.co/400x300/333333/FFF5E1?text=Sample+Ring" alt="Product Image" class="w-full h-48 object-cover">
+                <div class="p-4 flex-grow">
+                    <h3 class="font-bold text-lg text-white">22K Solitaire Ring</h3>
+                    <p class="text-sm text-gray-400">Rings</p>
+                    <p class="text-lg font-bold text-yellow-400 mt-2">LKR 150,000.00</p>
+                </div>
+                <div class="p-4 bg-gray-700 flex justify-end space-x-2">
+                    <button class="text-blue-400 hover:text-blue-300"><i class="fas fa-edit"></i> Edit</button>
+                    <button class="text-red-400 hover:text-red-300"><i class="fas fa-trash"></i> Delete</button>
+                </div>
+            </div>
+            <!-- More products will be added here by JavaScript -->
+        </div>
+    </main>
+
+    <!-- Add/Edit Product Modal -->
+    <div id="product-modal" class="hidden fixed inset-0 bg-black bg-opacity-70 flex justify-center items-center p-4 z-30">
+        <div class="modal-container bg-white text-gray-800 rounded-lg shadow-2xl w-full max-w-lg">
+            <form id="product-form">
+                <div class="p-6">
+                    <h3 id="modal-title" class="text-2xl font-bold mb-4">Add New Product</h3>
+                    <div class="space-y-4">
+                        <div>
+                            <label for="product-name" class="block text-sm font-medium text-gray-700">Product Name</label>
+                            <input type="text" id="product-name" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" required>
+                        </div>
+                        <div>
+                            <label for="product-category" class="block text-sm font-medium text-gray-700">Category</label>
+                            <input type="text" id="product-category" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" required>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label for="product-price" class="block text-sm font-medium text-gray-700">Price (LKR)</label>
+                                <input type="number" id="product-price" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" required>
+                            </div>
+                            <div>
+                                <label for="product-weight" class="block text-sm font-medium text-gray-700">Weight (g)</label>
+                                <input type="number" step="0.001" id="product-weight" class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
+                            </div>
+                        </div>
+                        <div>
+                            <label for="product-image" class="block text-sm font-medium text-gray-700">Product Image</label>
+                            <input type="file" id="product-image" accept="image/png, image/jpeg, image/jfif" class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-yellow-50 file:text-yellow-700 hover:file:bg-yellow-100">
+                            <img id="image-preview" src="" alt="Image Preview" class="mt-2 rounded-md max-h-40 hidden">
+                        </div>
+                    </div>
+                </div>
+                <div class="p-4 bg-gray-50 border-t flex justify-end space-x-3">
+                    <button type="button" id="close-modal-btn" class="py-2 px-4 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300">Cancel</button>
+                    <button type="submit" class="py-2 px-4 bg-yellow-500 text-white font-semibold rounded-lg hover:bg-yellow-600">Save Product</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const addProductBtn = document.getElementById('add-product-btn');
+            const productModal = document.getElementById('product-modal');
+            const closeModalBtn = document.getElementById('close-modal-btn');
+            const productImageInput = document.getElementById('product-image');
+            const imagePreview = document.getElementById('image-preview');
+
+            function showModal() {
+                productModal.classList.remove('hidden');
+            }
+
+            function hideModal() {
+                productModal.classList.add('hidden');
+                document.getElementById('product-form').reset();
+                imagePreview.classList.add('hidden');
+            }
+
+            addProductBtn.addEventListener('click', showModal);
+            closeModalBtn.addEventListener('click', hideModal);
+
+            productImageInput.addEventListener('change', function(event) {
+                const file = event.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        imagePreview.src = e.target.result;
+                        imagePreview.classList.remove('hidden');
+                    }
+                    reader.readAsDataURL(file);
+                }
+            });
+
+            // This is where you would handle form submission to save data
+            document.getElementById('product-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                alert('Product saved! (This is where it would save to the cloud)');
+                hideModal();
+            });
+        });
+    </script>
+</body>
+</html>

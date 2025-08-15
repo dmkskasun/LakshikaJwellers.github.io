@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lakshika Jewellers - Admin Dashboard</title>
+    <script>
+        // SECURITY CHECK: Temporarily disabled for easy testing.
+        // Remove the comment markers ('/*' and '*/') to enable it.
+        /*
+        if (sessionStorage.getItem('isLoggedIn') !== 'true') {
+            window.location.href = 'login.html';
+        }
+        */
+    </script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #1a1a1a; }
+        ::-webkit-scrollbar-thumb { background: #4a4a4a; border-radius: 10px; }
+        .nav-link.active { background-color: #D4AF37; color: #111827; }
+        .nav-link.active i { color: #111827; }
+        #signature-pad { 
+            border: 2px dashed #ccc; 
+            border-radius: 0.375rem; 
+            cursor: crosshair; 
+            touch-action: none;
+        }
+
+        @media print {
+            body > :not(.is-printing) { display: none !important; }
+            html, body { height: auto !important; overflow: visible !important; background: #fff !important; font-size: 12pt; }
+            .is-printing { position: static !important; display: block !important; visibility: visible !important; padding: 0 !important; margin: 0 !important; background: none !important; }
+            .printable-area { position: static !important; width: auto !important; height: auto !important; margin: 0 !important; padding: 0 !important; border: none !important; box-shadow: none !important; color: #000; }
+            .no-print { display: none !important; }
+            .print-header-wrapper > div { display: flex !important; justify-content: space-between !important; align-items: flex-start !important; padding: 0.5in 0.5in 0.25in 0.5in; }
+            .company-details-print { display: flex !important; align-items: center !important; }
+            .invoice-title-print { text-align: right !important; }
+            .printable-area .p-6 { padding: 0 0.5in; }
+            .p-6 > .grid { display: grid !important; grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+            #signature-pad { border: none !important; }
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-gray-200">
+
+    <div class="flex">
+        <!-- CORRECTED: Removed the 'hidden' class to allow the transform to work correctly -->
+        <aside id="sidebar" class="w-64 bg-gray-800 p-4 flex flex-col fixed h-full z-40 transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out no-print md:flex">
+            <div class="flex items-center justify-between mb-8">
+                <div class="flex items-center">
+                    <img src="https://placehold.co/48x48/1F2937/D4AF37?text=LJ" alt="Lakshika Jewellers Logo" class="w-12 h-12 mr-2 rounded-full object-cover">
+                    <h1 class="text-xl font-bold text-white">Lakshika Jewellers</h1>
+                </div>
+                <button id="close-menu-btn" class="md:hidden text-gray-400 hover:text-white">
+                    <i class="fas fa-times text-2xl"></i>
+                </button>
+            </div>
+            <nav class="flex-grow">
+                <ul>
+                    <li><a href="#" data-view="dashboard" class="nav-link active flex items-center py-3 px-4 rounded-lg"><i class="fas fa-tachometer-alt w-6 mr-2"></i> Dashboard</a></li>
+                    <li><a href="#" data-view="job-orders" class="nav-link flex items-center py-3 px-4 rounded-lg transition duration-200 hover:bg-gray-700"><i class="fas fa-clipboard-list w-6 mr-2"></i> Job Orders</a></li>
+                    <li><a href="#" data-view="products" class="nav-link flex items-center py-3 px-4 rounded-lg transition duration-200 hover:bg-gray-700"><i class="fas fa-gem w-6 mr-2"></i> Products</a></li>
+                </ul>
+            </nav>
+            <div class="mt-auto">
+                <a href="#" id="logout-btn" class="nav-link flex items-center py-3 px-4 rounded-lg transition duration-200 hover:bg-gray-700"><i class="fas fa-sign-out-alt w-6 mr-2"></i> Logout</a>
+            </div>
+        </aside>
+
+        <div class="flex-1 flex flex-col md:ml-64">
+            <header class="md:hidden bg-gray-800 p-4 flex justify-between items-center no-print sticky top-0 z-30">
+                <button id="menu-toggle-btn" class="text-white">
+                    <i class="fas fa-bars text-2xl"></i>
+                </button>
+                <h1 class="text-lg font-bold text-white">Lakshika Jewellers</h1>
+                <div class="w-8"></div> 
+            </header>
+
+            <main class="flex-1 p-4 md:p-8 no-print">
+                <div id="dashboard-view" class="view">
+                     <h2 class="text-3xl font-bold mb-6 text-yellow-400">Dashboard</h2>
+                     <p>Welcome to your central control board.</p>
+                </div>
+                
+                <div id="job-orders-view" class="view hidden pb-32 md:pb-0"> 
+                    <h2 class="text-3xl font-bold mb-6 text-yellow-400">Create New Job Order</h2>
+                    <div class="bg-gray-800 p-4 md:p-8 rounded-xl shadow-lg">
+                        <form id="job-order-form">
+                            <div class="border-b border-gray-700 pb-6 mb-6">
+                                <h3 class="text-xl font-bold text-white mb-4">Customer & Invoice Details</h3>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <input id="job-customer-name" type="text" placeholder="Customer Name" class="bg-gray-700 p-3 rounded-lg w-full">
+                                    <input id="job-contact-number" type="text" placeholder="Contact Number" class="bg-gray-700 p-3 rounded-lg w-full">
+                                    <input id="job-delivery-date" type="date" class="bg-gray-700 p-3 rounded-lg w-full text-gray-400">
+                                    <input id="job-old-gold" type="number" placeholder="Old Gold Value (LKR)" class="bg-gray-700 p-3 rounded-lg w-full">
+                                    <input id="job-advance" type="number" placeholder="Advance Payment (LKR)" class="bg-gray-700 p-3 rounded-lg w-full">
+                                     <input id="job-final-price" type="number" placeholder="Final Item Price (LKR)" class="bg-gray-700 p-3 rounded-lg w-full">
+                                    <input id="job-remark" type="text" placeholder="Remark" class="bg-gray-700 p-3 rounded-lg w-full md:col-span-2">
+                                </div>
+                            </div>
+
+                            <div class="border-b border-gray-700 pb-6 mb-6">
+                                <h3 class="text-xl font-bold text-white mb-4">Item & Wastage Calculation</h3>
+                                <div class="grid grid-cols-1 md:grid-cols-4 gap-6 items-end">
+                                    <div class="md:col-span-2">
+                                        <label class="block text-sm font-medium text-gray-400 mb-1">Item Description</label>
+                                        <input id="job-item-desc" type="text" placeholder="e.g., Gold Ring with Sapphire" class="bg-gray-700 p-3 rounded-lg w-full">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-400 mb-1">Karatage</label>
+                                        <select id="job-karatage" class="bg-gray-700 p-3 rounded-lg w-full">
+                                            <option value="">Select Karatage</option>
+                                            <option value="22K">22K</option>
+                                            <option value="18K">18K</option>
+                                            <option value="14K">14K</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-400 mb-1">Item Weight (g)</label>
+                                        <input type="number" step="0.001" id="job-item-weight" placeholder="0.000" class="bg-gray-700 p-3 rounded-lg w-full">
+                                    </div>
+                                    <div class="md:col-span-4 grid grid-cols-1 md:grid-cols-4 gap-6 items-center">
+                                        <button type="button" id="calculate-wastage-btn" class="bg-yellow-500 text-gray-900 font-bold p-3 rounded-lg hover:bg-yellow-400 transition h-12">Calculate Wastage</button>
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-400 mb-1">Workshop Wastage (g)</label>
+                                            <input id="job-workshop-wastage" type="text" class="bg-gray-600 p-3 rounded-lg w-full" readonly>
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-400 mb-1">Customer Wastage (g)</label>
+                                            <input id="job-customer-wastage" type="text" class="bg-gray-600 p-3 rounded-lg w-full" readonly>
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-400 mb-1">Total Gold for Customer (g)</label>
+                                            <input id="job-total-gold" type="text" class="bg-gray-600 p-3 rounded-lg w-full" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="border-b border-gray-700 pb-6 mb-6">
+                                <h3 class="text-xl font-bold text-white mb-4">Workshop Specifications</h3>
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                    <div class="md:col-span-3">
+                                        <label class="block text-sm font-medium text-gray-400 mb-2">Design Detail (Image/Website Link)</label>
+                                        <input id="job-design-detail" type="text" placeholder="Enter image URL or website link" class="bg-gray-700 p-3 rounded-lg w-full mb-2">
+                                        <input id="job-design-image" type="file" accept="image/*" multiple class="w-full text-sm text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-gray-600 file:text-yellow-300 hover:file:bg-gray-500">
+                                        <div id="job-design-gallery" class="mt-4 flex flex-wrap gap-4 hidden">
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-400 mb-1">Size</label>
+                                        <input id="job-size" type="text" placeholder="e.g., Ring 7" class="bg-gray-700 p-3 rounded-lg w-full">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-400 mb-1">Stone Size (mm)</label>
+                                        <input id="job-stone-size" type="text" placeholder="e.g., 5mm" class="bg-gray-700 p-3 rounded-lg w-full">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-400 mb-1">Dimensions (mm)</label>
+                                        <input id="job-dimensions" type="text" placeholder="e.g., 10x15mm" class="bg-gray-700 p-3 rounded-lg w-full">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-400 mb-1">Gem Setting Type</label>
+                                        <select id="job-gem-setting" class="bg-gray-700 p-3 rounded-lg w-full">
+                                            <option value="">Select Gem Setting</option>
+                                            <option>Prong</option><option>Bezel</option><option>Pave</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-400 mb-1">Gold Given (g)</label>
+                                        <input id="job-gold-given" type="number" step="0.001" placeholder="0.000" class="bg-gray-700 p-3 rounded-lg w-full">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-400 mb-1">Stone Weight (carats)</label>
+                                        <input id="job-stone-weight" type="number" step="0.01" placeholder="0.00" class="bg-gray-700 p-3 rounded-lg w-full">
+                                    </div>
+                                    <div class="md:col-span-3">
+                                        <label class="block text-sm font-medium text-gray-400 mb-1">Gold Balance to Return (g)</label>
+                                        <input id="job-gold-balance" type="text" class="bg-gray-600 p-3 rounded-lg w-full" readonly>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mt-8 hidden md:flex md:flex-row justify-end space-y-4 md:space-y-0 md:space-x-4">
+                                <button type="button" id="generate-workshop-order-btn" class="bg-gray-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-gray-500">Generate Workshop Order</button>
+                                <button type="button" id="generate-invoice-btn" class="bg-yellow-400 text-gray-900 font-bold py-3 px-6 rounded-lg hover:bg-yellow-300">Generate Customer Invoice</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <div id="products-view" class="view hidden">
+                    <div class="flex justify-between items-center mb-8">
+                        <h2 class="text-3xl font-bold text-yellow-400">Manage Products</h2>
+                        <button id="add-product-btn" class="bg-yellow-400 text-gray-900 font-bold py-2 px-4 rounded-lg hover:bg-yellow-300 transition duration-200 flex items-center">
+                            <i class="fas fa-plus mr-2"></i> Add New Product
+                        </button>
+                    </div>
+                    <div id="products-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                        <div class="product-card-admin bg-gray-800 rounded-lg shadow-lg overflow-hidden flex flex-col">
+                            <img src="https://placehold.co/400x300/333333/FFF5E1?text=Sample+Ring" alt="Product Image" class="w-full h-48 object-cover">
+                            <div class="p-4 flex-grow"><h3 class="font-bold text-lg text-white">22K Solitaire Ring</h3><p class="text-sm text-gray-400">Rings</p><p class="text-lg font-bold text-yellow-400 mt-2">LKR 150,000.00</p></div>
+                            <div class="p-4 bg-gray-700 flex justify-end space-x-2"><button class="edit-product-btn text-blue-400 hover:text-blue-300"><i class="fas fa-edit"></i> Edit</button><button class="delete-product-btn text-red-400 hover:text-red-300"><i class="fas fa-trash"></i> Delete</button></div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+    
+    <div id="job-order-mobile-footer" class="fixed bottom-0 left-0 right-0 bg-gray-800 p-4 border-t border-gray-700 z-30 md:hidden hidden">
+        <div class="flex flex-col space-y-3">
+            <button type="button" id="generate-workshop-order-btn-mobile" class="bg-gray-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-gray-500 w-full">Generate Workshop Order</button>
+            <button type="button" id="generate-invoice-btn-mobile" class="bg-yellow-400 text-gray-900 font-bold py-3 px-6 rounded-lg hover:bg-yellow-300 w-full">Generate Customer Invoice</button>
+        </div>
+    </div>
+
+
+    <div id="invoice-modal" class="hidden fixed inset-0 bg-black bg-opacity-70 flex justify-center items-center p-2 z-50">
+        <div class="modal-container printable-area bg-white text-gray-800 rounded-lg shadow-2xl w-full max-w-4xl max-h-full flex flex-col">
+             <div class="flex-grow overflow-y-auto">
+                <div class="p-4 md:p-8 border-b border-gray-200 print-header-wrapper">
+                      <div class="w-full">
+                           <div class="company-details-print">
+                                <img src="https://placehold.co/80x80/FFFFFF/D4AF37?text=LJ" alt="Lakshika Jewellers Logo" class="w-16 h-16 md:w-20 md:h-20 mr-4 rounded-full object-cover">
+                                <div>
+                                    <h2 class="text-2xl md:text-3xl font-bold text-gray-900">Lakshika Jewellers</h2>
+                                    <p class="text-sm md:text-base text-gray-600">220B Galle - Colombo Rd, Panadura 12500</p>
+                                </div>
+                           </div>
+                           <div class="invoice-title-print mt-4 md:mt-0">
+                                <h3 class="text-3xl md:text-4xl font-bold text-gray-700">INVOICE</h3>
+                                <p class="text-sm md:text-base">ID: <span id="invoice-id" class="font-mono"></span></p>
+                                <p class="text-sm md:text-base">Date: <span id="invoice-date-display"></span></p>
+                           </div>
+                      </div>
+                </div>
+                <div class="p-4 md:p-6">
+                      <div class="mb-4 pt-4">
+                           <h4 class="font-bold text-gray-700 mb-2">CUSTOMER DETAILS</h4>
+                           <p id="invoice-customer-name" class="font-semibold"></p>
+                           <p id="invoice-customer-contact"></p>
+                           <p id="invoice-delivery-date" class="text-sm text-gray-600 mt-1"></p>
+                      </div>
+                      <div class="mb-4 overflow-x-auto">
+                           <table class="w-full text-sm">
+                                <thead><tr class="border-b"><th class="p-2 text-left font-bold text-gray-600 w-2/5">DESCRIPTION</th><th class="p-2 text-left font-bold text-gray-600">KARATAGE</th><th class="p-2 text-left font-bold text-gray-600">WEIGHT</th><th class="p-2 text-right font-bold text-gray-600">PRICE (LKR)</th></tr></thead>
+                                <tbody id="invoice-items-body"></tbody>
+                           </table>
+                      </div>
+                      <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8 border-t pt-4">
+                           <div class="text-left">
+                                <h4 class="font-bold text-gray-700 mb-2">CUSTOMER SIGNATURE</h4>
+                                <canvas id="signature-pad" width="300" height="150"></canvas>
+                                <button id="clear-signature-btn" class="mt-2 text-sm text-blue-600 hover:text-blue-800 no-print">Clear Signature</button>
+                           </div>
+                           <div class="text-left md:text-right">
+                                <div class="space-y-2">
+                                         <div class="flex justify-between items-center"><p class="text-gray-600">Total Price:</p><p id="invoice-total-price" class="font-bold"></p></div>
+                                         <div class="flex justify-between items-center"><p class="text-gray-600">Old Gold Value:</p><p id="invoice-old-gold" class="font-bold"></p></div>
+                                         <div class="flex justify-between items-center"><p class="text-gray-600">Advance Payment:</p><p id="invoice-advance" class="font-bold"></p></div>
+                                         <div class="flex justify-between items-center text-xl border-t pt-2 mt-2"><p class="font-bold text-gray-800">BALANCE DUE:</p><p id="invoice-balance" class="font-extrabold text-yellow-600"></p></div>
+                                </div>
+                           </div>
+                      </div>
+                </div>
+            </div>
+             <div class="p-5 bg-gray-50 border-t flex-shrink-0 flex justify-end space-x-3 no-print">
+                  <button id="close-invoice-modal-btn" class="py-2 px-4 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300">Close</button>
+                  <button id="print-invoice-btn" class="py-2 px-4 bg-blue-500 text-white font-semibold rounded-lg hover:bg-blue-600">Print Invoice</button>
+             </div>
+        </div>
+    </div>
+
+    <div id="workshop-modal" class="hidden fixed inset-0 bg-black bg-opacity-70 flex justify-center items-center p-2 z-50">
+        <div class="modal-container printable-area bg-white text-gray-800 rounded-lg shadow-2xl w-full max-w-2xl max-h-full flex flex-col">
+            <div class="flex-grow overflow-y-auto p-4 md:p-6">
+                <div class="text-center border-b pb-4 mb-4">
+                    <h2 class="text-2xl font-bold text-gray-900">WORKSHOP ORDER</h2>
+                    <p class="text-sm">Date: <span id="workshop-date"></span></p>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4 text-sm">
+                    <div><p class="font-bold">Delivery Date:</p><p id="workshop-delivery-date"></p></div>
+                    <div><p class="font-bold">Item Description:</p><p id="workshop-item-desc"></p></div>
+                    <div><p class="font-bold">Karatage:</p><p id="workshop-karatage"></p></div>
+                    <div><p class="font-bold">Final Item Weight (g):</p><p id="workshop-item-weight"></p></div>
+                    <div><p class="font-bold">Workshop Wastage (g):</p><p id="workshop-wastage"></p></div>
+                    <div><p class="font-bold">Size:</p><p id="workshop-size"></p></div>
+                    <div><p class="font-bold">Stone Size:</p><p id="workshop-stone-size"></p></div>
+                    <div><p class="font-bold">Dimensions:</p><p id="workshop-dimensions"></p></div>
+                    <div><p class="font-bold">Gem Setting:</p><p id="workshop-gem-setting"></p></div>
+                    <div><p class="font-bold">Gold Given (g):</p><p id="workshop-gold-given"></p></div>
+                    <div><p class="font-bold">Stone Weight (carats):</p><p id="workshop-stone-weight"></p></div>
+                    <div><p class="font-bold">Gold Balance to Return (g):</p><p id="workshop-gold-balance"></p></div>
+                    <div class="col-span-1 sm:col-span-2">
+                        <p class="font-bold">Design Details:</p>
+                        <p id="workshop-design-detail"></p>
+                        <div id="workshop-design-images-container" class="mt-2 flex flex-wrap gap-2">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="p-5 bg-gray-50 border-t flex-shrink-0 flex justify-end space-x-3 no-print">
+                <button id="close-workshop-modal-btn" class="py-2 px-4 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300">Close</button>
+                <button id="print-workshop-btn" class="py-2 px-4 bg-blue-500 text-white font-semibold rounded-lg hover:bg-blue-600">Print Order</button>
+            </div>
+        </div>
+    </div>
+    
+    <div id="product-modal" class="hidden fixed inset-0 bg-black bg-opacity-70 flex justify-center items-center p-2 z-50">
+        <div class="modal-container bg-gray-800 text-gray-200 rounded-lg shadow-2xl w-full max-w-lg max-h-full flex flex-col">
+            <div class="p-6 flex-grow overflow-y-auto">
+                <h3 id="modal-title" class="text-2xl font-bold mb-4">Add New Product</h3>
+                <div class="space-y-4">
+                    <div><label for="product-name" class="block text-sm font-medium text-gray-400">Product Name</label><input type="text" id="product-name" class="mt-1 block w-full p-2 bg-gray-700 border border-gray-600 rounded-md" required></div>
+                    <div><label for="product-category" class="block text-sm font-medium text-gray-400">Category</label><input type="text" id="product-category" class="mt-1 block w-full p-2 bg-gray-700 border border-gray-600 rounded-md" required></div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div><label for="product-price" class="block text-sm font-medium text-gray-400">Price (LKR)</label><input type="number" id="product-price" class="mt-1 block w-full p-2 bg-gray-700 border border-gray-600 rounded-md" required></div>
+                        <div><label for="product-weight" class="block text-sm font-medium text-gray-400">Weight (g)</label><input type="number" step="0.001" id="product-weight" class="mt-1 block w-full p-2 bg-gray-700 border border-gray-600 rounded-md"></div>
+                    </div>
+                    <div>
+                        <label for="product-images" class="block text-sm font-medium text-gray-400">Product Images</label>
+                        <input type="file" id="product-images" accept="image/*" multiple class="mt-1 block w-full text-sm text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-gray-600 file:text-yellow-300 hover:file:bg-gray-500">
+                        <div id="image-preview-gallery" class="mt-4 flex flex-wrap gap-4"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="p-4 bg-gray-700 border-t border-gray-600 flex-shrink-0 flex justify-end space-x-3">
+                <button type="button" id="close-product-modal-btn" class="py-2 px-4 bg-gray-500 text-white rounded-lg hover:bg-gray-400">Cancel</button>
+                <button type="submit" class="py-2 px-4 bg-yellow-500 text-gray-900 font-semibold rounded-lg hover:bg-yellow-400">Save Product</button>
+            </div>
+        </div>
+    </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // --- RESPONSIVE NAVIGATION ---
+    const sidebar = document.getElementById('sidebar');
+    const menuToggleBtn = document.getElementById('menu-toggle-btn');
+    const closeMenuBtn = document.getElementById('close-menu-btn');
+    const navLinks = document.querySelectorAll('.nav-link');
+    const mobileFooter = document.getElementById('job-order-mobile-footer');
+
+    const openSidebar = () => sidebar.classList.remove('-translate-x-full');
+    const closeSidebar = () => sidebar.classList.add('-translate-x-full');
+
+    if (menuToggleBtn) menuToggleBtn.addEventListener('click', openSidebar);
+    if (closeMenuBtn) closeMenuBtn.addEventListener('click', closeSidebar);
+
+    // --- LOGOUT & VIEW NAVIGATION ---
+    const logoutBtn = document.getElementById('logout-btn');
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            sessionStorage.removeItem('isLoggedIn');
+            window.location.href = 'login.html';
+        });
+    }
+    const views = document.querySelectorAll('.view');
+    navLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+            const viewId = this.dataset.view;
+            if (!viewId) return;
+            e.preventDefault();
+            
+            views.forEach(view => view.classList.add('hidden'));
+            const targetView = document.getElementById(viewId + '-view');
+            if(targetView) targetView.classList.remove('hidden');
+
+            navLinks.forEach(nav => nav.classList.remove('active'));
+            this.classList.add('active');
+
+            if (mobileFooter) {
+                if (viewId === 'job-orders') {
+                    mobileFooter.classList.remove('hidden');
+                } else {
+                    mobileFooter.classList.add('hidden');
+                }
+            }
+            
+            if (window.innerWidth < 768) {
+                closeSidebar();
+            }
+        });
+    });
+
+    // --- WASTAGE & GOLD BALANCE CALCULATION ---
+    const calculateBtn = document.getElementById('calculate-wastage-btn');
+    if (calculateBtn) {
+        calculateBtn.addEventListener('click', function() {
+            const karatage = document.getElementById('job-karatage').value;
+            const itemWeight = parseFloat(document.getElementById('job-item-weight').value) || 0;
+            const goldGiven = parseFloat(document.getElementById('job-gold-given').value) || 0;
+
+            if (itemWeight === 0 || karatage === "") {
+                alert("Please enter the item weight and select a karatage.");
+                return;
+            }
+            let workshopWastage = 0;
+            let customerWastage = 0;
+            if (karatage === '22K') {
+                const sovereigns = itemWeight / 8;
+                workshopWastage = sovereigns * 0.45;
+                customerWastage = sovereigns * 0.60;
+            } else {
+                const wastageAmount = itemWeight * 0.10;
+                workshopWastage = wastageAmount;
+                customerWastage = wastageAmount;
+            }
+            const totalGoldForCustomer = itemWeight + customerWastage;
+            const goldBalance = goldGiven - (itemWeight + workshopWastage);
+
+            document.getElementById('job-workshop-wastage').value = workshopWastage.toFixed(3);
+            document.getElementById('job-customer-wastage').value = customerWastage.toFixed(3);
+            document.getElementById('job-total-gold').value = totalGoldForCustomer.toFixed(3);
+            document.getElementById('job-gold-balance').value = goldBalance.toFixed(3);
+        });
+    }
+
+    // --- JOB ORDER FORM: MULTIPLE IMAGE UPLOAD & DELETE ---
+    const jobDesignImageInput = document.getElementById('job-design-image');
+    const jobDesignGallery = document.getElementById('job-design-gallery');
+    let jobDesignFiles = []; 
+
+    function updateJobDesignPreview() {
+        jobDesignGallery.innerHTML = '';
+        if (jobDesignFiles.length > 0) {
+            jobDesignGallery.classList.remove('hidden');
+        } else {
+            jobDesignGallery.classList.add('hidden');
+        }
+        jobDesignFiles.forEach((file, index) => {
+            const reader = new FileReader();
+            reader.onload = e => {
+                const previewWrapper = document.createElement('div');
+                previewWrapper.className = 'relative w-fit';
+                previewWrapper.innerHTML = `
+                    <img src="${e.target.result}" class="w-24 h-24 object-cover rounded-md">
+                    <button type="button" data-index="${index}" class="remove-job-image-btn absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs">&times;</button>
+                `;
+                jobDesignGallery.appendChild(previewWrapper);
+            };
+            reader.readAsDataURL(file);
+        });
+    }
+
+    if (jobDesignImageInput) {
+        jobDesignImageInput.addEventListener('change', function(event) {
+            jobDesignFiles.push(...Array.from(event.target.files));
+            jobDesignImageInput.value = ''; 
+            updateJobDesignPreview();
+        });
+    }
+
+    if (jobDesignGallery) {
+        jobDesignGallery.addEventListener('click', function(e) {
+            if (e.target.classList.contains('remove-job-image-btn')) {
+                const indexToRemove = parseInt(e.target.dataset.index, 10);
+                jobDesignFiles.splice(indexToRemove, 1);
+                updateJobDesignPreview();
+            }
+        });
+    }
+
+
+    // --- GENERATE BUTTONS & MODALS ---
+    const generateInvoiceBtn = document.getElementById('generate-invoice-btn');
+    const generateWorkshopOrderBtn = document.getElementById('generate-workshop-order-btn');
+    const invoiceModal = document.getElementById('invoice-modal');
+    const workshopModal = document.getElementById('workshop-modal');
+
+    const generateWorkshopOrderAction = () => {
+        document.getElementById('workshop-date').textContent = new Date().toLocaleDateString('en-CA');
+        document.getElementById('workshop-delivery-date').textContent = document.getElementById('job-delivery-date').value;
+        document.getElementById('workshop-item-desc').textContent = document.getElementById('job-item-desc').value;
+        document.getElementById('workshop-karatage').textContent = document.getElementById('job-karatage').value;
+        document.getElementById('workshop-item-weight').textContent = document.getElementById('job-item-weight').value + ' g';
+        document.getElementById('workshop-wastage').textContent = document.getElementById('job-workshop-wastage').value + ' g';
+        document.getElementById('workshop-size').textContent = document.getElementById('job-size').value;
+        document.getElementById('workshop-stone-size').textContent = document.getElementById('job-stone-size').value;
+        document.getElementById('workshop-dimensions').textContent = document.getElementById('job-dimensions').value;
+        document.getElementById('workshop-gem-setting').textContent = document.getElementById('job-gem-setting').value;
+        document.getElementById('workshop-gold-given').textContent = document.getElementById('job-gold-given').value + ' g';
+        document.getElementById('workshop-stone-weight').textContent = document.getElementById('job-stone-weight').value + ' carats';
+        document.getElementById('workshop-gold-balance').textContent = document.getElementById('job-gold-balance').value + ' g';
+        document.getElementById('workshop-design-detail').textContent = document.getElementById('job-design-detail').value;
+        
+        const workshopImagesContainer = document.getElementById('workshop-design-images-container');
+        workshopImagesContainer.innerHTML = ''; 
+
+        if (jobDesignFiles.length > 0) {
+            jobDesignFiles.forEach(file => {
+                const reader = new FileReader();
+                reader.onload = e => {
+                    const img = document.createElement('img');
+                    img.src = e.target.result;
+                    img.className = 'rounded-lg max-w-xs h-auto object-cover';
+                    workshopImagesContainer.appendChild(img);
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+        workshopModal.classList.remove('hidden');
+    };
+    
+    const generateInvoiceAction = () => {
+        const finalPrice = parseFloat(document.getElementById('job-final-price').value) || 0;
+        const oldGoldValue = parseFloat(document.getElementById('job-old-gold').value) || 0;
+        const advance = parseFloat(document.getElementById('job-advance').value) || 0;
+        const balance = finalPrice - oldGoldValue - advance;
+
+        document.getElementById('invoice-id').textContent = `#${Date.now().toString().slice(-4)}`;
+        document.getElementById('invoice-date-display').textContent = new Date().toLocaleDateString('en-CA');
+        document.getElementById('invoice-customer-name').textContent = document.getElementById('job-customer-name').value;
+        document.getElementById('invoice-customer-contact').textContent = document.getElementById('job-contact-number').value;
+        document.getElementById('invoice-delivery-date').textContent = `Delivery by: ${document.getElementById('job-delivery-date').value}`;
+        
+        const invoiceTbody = document.getElementById('invoice-items-body');
+        invoiceTbody.innerHTML = `
+            <tr class="border-b">
+                <td class="p-2">${document.getElementById('job-item-desc').value}</td>
+                <td class="p-2">${document.getElementById('job-karatage').value}</td>
+                <td class="p-2">${document.getElementById('job-item-weight').value} g</td>
+                <td class="p-2 text-right">LKR ${finalPrice.toFixed(2)}</td>
+            </tr>
+        `;
+        document.getElementById('invoice-total-price').textContent = `LKR ${finalPrice.toFixed(2)}`;
+        document.getElementById('invoice-old-gold').textContent = `LKR ${oldGoldValue.toFixed(2)}`;
+        document.getElementById('invoice-advance').textContent = `LKR ${advance.toFixed(2)}`;
+        document.getElementById('invoice-balance').textContent = `LKR ${balance.toFixed(2)}`;
+
+        if (invoiceModal) invoiceModal.classList.remove('hidden');
+    };
+
+    if (generateWorkshopOrderBtn) generateWorkshopOrderBtn.addEventListener('click', generateWorkshopOrderAction);
+    if (generateInvoiceBtn) generateInvoiceBtn.addEventListener('click', generateInvoiceAction);
+
+    document.getElementById('generate-workshop-order-btn-mobile').addEventListener('click', generateWorkshopOrderAction);
+    document.getElementById('generate-invoice-btn-mobile').addEventListener('click', generateInvoiceAction);
+    
+    
+    // --- INVOICE MODAL: SIGNATURE PAD ---
+    const signaturePadCanvas = document.getElementById('signature-pad');
+    const clearSignatureBtn = document.getElementById('clear-signature-btn');
+    
+    if (signaturePadCanvas) {
+        const ctx = signaturePadCanvas.getContext('2d');
+        let isDrawing = false, lastX = 0, lastY = 0;
+        
+        function initializeSignaturePad() { Object.assign(ctx, { strokeStyle: '#000', lineWidth: 2, lineCap: 'round', lineJoin: 'round' }); }
+        function getCoords(e) { const rect = signaturePadCanvas.getBoundingClientRect(), t = e.touches && e.touches[0]; return { x: (t ? t.clientX : e.clientX) - rect.left, y: (t ? t.clientY : e.clientY) - rect.top }; }
+        function startDrawing(e) { e.preventDefault(); isDrawing = true; [lastX, lastY] = [getCoords(e).x, getCoords(e).y]; }
+        function draw(e) { if (!isDrawing) return; e.preventDefault(); const c = getCoords(e); ctx.beginPath(); ctx.moveTo(lastX, lastY); ctx.lineTo(c.x, c.y); ctx.stroke(); [lastX, lastY] = [c.x, c.y]; }
+        function stopDrawing() { isDrawing = false; }
+        function clearSignatureCanvas() { ctx.clearRect(0, 0, signaturePadCanvas.width, signaturePadCanvas.height); }
+
+        signaturePadCanvas.addEventListener('mousedown', startDrawing);
+        signaturePadCanvas.addEventListener('mousemove', draw);
+        signaturePadCanvas.addEventListener('mouseup', stopDrawing);
+        signaturePadCanvas.addEventListener('mouseleave', stopDrawing);
+        signaturePadCanvas.addEventListener('touchstart', startDrawing, { passive: false });
+        signaturePadCanvas.addEventListener('touchmove', draw, { passive: false });
+        signaturePadCanvas.addEventListener('touchend', stopDrawing);
+        
+        if(clearSignatureBtn) {
+            const clearAction = (e) => {
+                e.preventDefault();
+                clearSignatureCanvas();
+            };
+            clearSignatureBtn.addEventListener('click', clearAction);
+            clearSignatureBtn.addEventListener('touchend', clearAction);
+        }
+        
+        initializeSignaturePad();
+    }
+    
+    // --- MODAL CLOSE & PRINT BUTTONS ---
+    const closeInvoiceModalBtn = document.getElementById('close-invoice-modal-btn');
+    const printInvoiceBtn = document.getElementById('print-invoice-btn');
+    const closeWorkshopModalBtn = document.getElementById('close-workshop-modal-btn');
+    const printWorkshopBtn = document.getElementById('print-workshop-btn');
+
+    let isPrinting = false; 
+
+    const handlePrint = (modalToPrint) => {
+        if (isPrinting || !modalToPrint) return;
+        isPrinting = true;
+        modalToPrint.classList.add('is-printing');
+        window.print();
+    };
+
+    window.addEventListener('afterprint', () => {
+        const printedModal = document.querySelector('.is-printing');
+        if (printedModal) {
+            printedModal.classList.remove('is-printing');
+        }
+        isPrinting = false;
+    });
+
+    if (closeInvoiceModalBtn) closeInvoiceModalBtn.addEventListener('click', () => invoiceModal.classList.add('hidden'));
+    if (printInvoiceBtn) printInvoiceBtn.addEventListener('click', () => handlePrint(invoiceModal));
+
+    if (closeWorkshopModalBtn) closeWorkshopModalBtn.addEventListener('click', () => workshopModal.classList.add('hidden'));
+    if (printWorkshopBtn) printWorkshopBtn.addEventListener('click', () => handlePrint(workshopModal));
+
+    // --- PRODUCT MANAGEMENT ---
+    const addProductBtn = document.getElementById('add-product-btn');
+    const productModal = document.getElementById('product-modal');
+    const closeProductModalBtn = document.getElementById('close-product-modal-btn');
+    const productImagesInput = document.getElementById('product-images');
+    const imagePreviewGallery = document.getElementById('image-preview-gallery');
+    const productsGrid = document.getElementById('products-grid');
+
+    let selectedFiles = []; 
+
+    function openProductModal() {
+        document.getElementById('product-form').reset();
+        document.getElementById('modal-title').textContent = 'Add New Product';
+        selectedFiles = [];
+        updateImagePreview();
+        productModal.classList.remove('hidden');
+    }
+
+    function closeProductModal() {
+        productModal.classList.add('hidden');
+    }
+
+    function updateImagePreview() {
+        imagePreviewGallery.innerHTML = ''; 
+        selectedFiles.forEach((file, index) => {
+            const reader = new FileReader();
+            reader.onload = e => {
+                const previewWrapper = document.createElement('div');
+                previewWrapper.className = 'relative';
+                previewWrapper.innerHTML = `
+                    <img src="${e.target.result}" class="w-24 h-24 object-cover rounded-md">
+                    <button data-index="${index}" class="remove-image-btn absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs">&times;</button>
+                `;
+                imagePreviewGallery.appendChild(previewWrapper);
+            };
+            reader.readAsDataURL(file);
+        });
+    }
+
+    if (addProductBtn) addProductBtn.addEventListener('click', openProductModal);
+    if (closeProductModalBtn) closeProductModalBtn.addEventListener('click', closeProductModal);
+
+    if (productImagesInput) {
+        productImagesInput.addEventListener('change', function(event) {
+            selectedFiles.push(...Array.from(event.target.files));
+            this.value = '';
+            updateImagePreview();
+        });
+    }
+    
+    imagePreviewGallery.addEventListener('click', function(e) {
+        if (e.target.classList.contains('remove-image-btn')) {
+            const indexToRemove = parseInt(e.target.dataset.index, 10);
+            selectedFiles.splice(indexToRemove, 1);
+            updateImagePreview();
+        }
+    });
+
+    productsGrid.addEventListener('click', function(e) {
+        const editButton = e.target.closest('.edit-product-btn');
+        const deleteButton = e.target.closest('.delete-product-btn');
+
+        if (editButton) {
+            document.getElementById('modal-title').textContent = 'Edit Product';
+            document.getElementById('product-name').value = '22K Solitaire Ring';
+            document.getElementById('product-category').value = 'Rings';
+            document.getElementById('product-price').value = 150000;
+            productModal.classList.remove('hidden');
+        }
+
+        if (deleteButton) {
+            if (confirm('Are you sure you want to delete this product?')) {
+                deleteButton.closest('.product-card-admin').remove();
+            }
+        }
+    });
+});
+</script>
+</body>
+</html>

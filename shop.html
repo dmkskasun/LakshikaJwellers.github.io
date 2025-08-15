@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lakshika Jewellers - Online Store</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .font-cormorant {
+            font-family: 'Cormorant Garamond', serif;
+        }
+        .product-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+
+    <!-- Header & Navigation -->
+    <header class="bg-white shadow-md sticky top-0 z-10">
+        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="flex items-center">
+                <img src="logo.jfif" alt="Lakshika Jewellers Logo" class="w-12 h-12 mr-3 rounded-full">
+                <a href="#" class="text-2xl font-cormorant font-bold text-gray-800">Lakshika Jewellers</a>
+            </div>
+            <div class="hidden md:flex items-center space-x-8">
+                <a href="#" class="text-gray-600 hover:text-yellow-600">Rings</a>
+                <a href="#" class="text-gray-600 hover:text-yellow-600">Necklaces</a>
+                <a href="#" class="text-gray-600 hover:text-yellow-600">Earrings</a>
+                <a href="#" class="text-gray-600 hover:text-yellow-600">Bracelets</a>
+            </div>
+            <div class="flex items-center">
+                <a href="#" class="text-gray-600 hover:text-yellow-600"><i class="fas fa-shopping-cart"></i></a>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="bg-yellow-50 py-20">
+        <div class="container mx-auto px-6 text-center">
+            <h1 class="text-5xl font-cormorant font-bold text-gray-800 mb-4">Timeless Elegance, Modern Designs</h1>
+            <p class="text-gray-600 max-w-2xl mx-auto">Discover our exquisite collection of fine jewellery, crafted with passion and precision to celebrate your most precious moments.</p>
+            <button class="mt-8 bg-yellow-500 text-white font-bold py-3 px-8 rounded-full hover:bg-yellow-600 transition duration-300">Shop Collection</button>
+        </div>
+    </section>
+
+    <!-- Featured Products Section -->
+    <section class="py-16">
+        <div class="container mx-auto px-6">
+            <h2 class="text-3xl font-cormorant font-bold text-center text-gray-800 mb-10">Featured Products</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                <!-- Product Card 1 -->
+                <div class="product-card bg-white rounded-lg shadow-lg overflow-hidden">
+                    <img src="https://placehold.co/400x400/FFF5E1/333333?text=Gold+Ring" alt="Jewellery Item" class="w-full h-64 object-cover">
+                    <div class="p-6">
+                        <h3 class="text-xl font-semibold font-cormorant text-gray-800">Classic Solitaire Ring</h3>
+                        <p class="text-gray-600 mt-2">LKR 120,000.00</p>
+                    </div>
+                </div>
+                <!-- Product Card 2 -->
+                <div class="product-card bg-white rounded-lg shadow-lg overflow-hidden">
+                    <img src="https://placehold.co/400x400/FFF5E1/333333?text=Necklace" alt="Jewellery Item" class="w-full h-64 object-cover">
+                    <div class="p-6">
+                        <h3 class="text-xl font-semibold font-cormorant text-gray-800">Diamond Pendant Necklace</h3>
+                        <p class="text-gray-600 mt-2">LKR 250,000.00</p>
+                    </div>
+                </div>
+                <!-- Product Card 3 -->
+                <div class="product-card bg-white rounded-lg shadow-lg overflow-hidden">
+                    <img src="https://placehold.co/400x400/FFF5E1/333333?text=Earrings" alt="Jewellery Item" class="w-full h-64 object-cover">
+                    <div class="p-6">
+                        <h3 class="text-xl font-semibold font-cormorant text-gray-800">Pearl Drop Earrings</h3>
+                        <p class="text-gray-600 mt-2">LKR 75,000.00</p>
+                    </div>
+                </div>
+                <!-- Product Card 4 -->
+                <div class="product-card bg-white rounded-lg shadow-lg overflow-hidden">
+                    <img src="https://placehold.co/400x400/FFF5E1/333333?text=Bracelet" alt="Jewellery Item" class="w-full h-64 object-cover">
+                    <div class="p-6">
+                        <h3 class="text-xl font-semibold font-cormorant text-gray-800">Sapphire Tennis Bracelet</h3>
+                        <p class="text-gray-600 mt-2">LKR 450,000.00</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-10">
+        <div class="container mx-auto px-6 text-center">
+            <p>&copy; 2025 Lakshika Jewellers. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+</body>
+</html>
