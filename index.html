@@ -123,7 +123,6 @@
                                         <input type="number" step="0.001" id="job-item-weight" placeholder="0.000" class="bg-gray-700 p-3 rounded-lg w-full">
                                     </div>
                                     <div class="md:col-span-4 grid grid-cols-1 md:grid-cols-4 gap-6 items-center">
-                                        <button type="button" id="calculate-wastage-btn" class="bg-yellow-500 text-gray-900 font-bold p-3 rounded-lg hover:bg-yellow-400 transition h-12">Calculate Wastage</button>
                                         <div>
                                             <label class="block text-sm font-medium text-gray-400 mb-1">Workshop Wastage (g)</label>
                                             <input id="job-workshop-wastage" type="text" class="bg-gray-600 p-3 rounded-lg w-full" readonly>
@@ -201,7 +200,7 @@
                     </div>
                     <div id="products-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                         <div class="product-card-admin bg-gray-800 rounded-lg shadow-lg overflow-hidden flex flex-col">
-                            <img src="logo.jpg" alt="Product Image" class="w-full h-48 object-cover">
+                            <img src="https://placehold.co/400x300/333333/FFF5E1?text=Sample+Ring" alt="Product Image" class="w-full h-48 object-cover">
                             <div class="p-4 flex-grow"><h3 class="font-bold text-lg text-white">22K Solitaire Ring</h3><p class="text-sm text-gray-400">Rings</p><p class="text-lg font-bold text-yellow-400 mt-2">LKR 150,000.00</p></div>
                             <div class="p-4 bg-gray-700 flex justify-end space-x-2"><button class="edit-product-btn text-blue-400 hover:text-blue-300"><i class="fas fa-edit"></i> Edit</button><button class="delete-product-btn text-red-400 hover:text-red-300"><i class="fas fa-trash"></i> Delete</button></div>
                         </div>
@@ -387,20 +386,20 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // --- WASTAGE & GOLD BALANCE CALCULATION ---
-    const calculateBtn = document.getElementById('calculate-wastage-btn');
-    if (calculateBtn) {
-        calculateBtn.addEventListener('click', function() {
-            const karatage = document.getElementById('job-karatage').value;
-            const itemWeight = parseFloat(document.getElementById('job-item-weight').value) || 0;
-            const goldGiven = parseFloat(document.getElementById('job-gold-given').value) || 0;
+    // --- AUTOMATIC WASTAGE & GOLD BALANCE CALCULATION ---
+    const jobKaratage = document.getElementById('job-karatage');
+    const jobItemWeight = document.getElementById('job-item-weight');
+    const jobGoldGiven = document.getElementById('job-gold-given');
 
-            if (itemWeight === 0 || karatage === "") {
-                alert("Please enter the item weight and select a karatage.");
-                return;
-            }
-            let workshopWastage = 0;
-            let customerWastage = 0;
+    const calculateWastageAndBalance = () => {
+        const karatage = jobKaratage.value;
+        const itemWeight = parseFloat(jobItemWeight.value) || 0;
+        const goldGiven = parseFloat(jobGoldGiven.value) || 0;
+
+        let workshopWastage = 0;
+        let customerWastage = 0;
+
+        if (itemWeight > 0 && karatage) {
             if (karatage === '22K') {
                 const sovereigns = itemWeight / 8;
                 workshopWastage = sovereigns * 0.45;
@@ -410,16 +409,22 @@ document.addEventListener('DOMContentLoaded', function() {
                 workshopWastage = wastageAmount;
                 customerWastage = wastageAmount;
             }
-            const totalGoldForCustomer = itemWeight + customerWastage;
-            // CORRECTED CALCULATION
-            const goldBalance = goldGiven - (itemWeight + workshopWastage);
+        }
 
-            document.getElementById('job-workshop-wastage').value = workshopWastage.toFixed(3);
-            document.getElementById('job-customer-wastage').value = customerWastage.toFixed(3);
-            document.getElementById('job-total-gold').value = totalGoldForCustomer.toFixed(3);
-            document.getElementById('job-gold-balance').value = goldBalance.toFixed(3);
-        });
-    }
+        const totalGoldForCustomer = itemWeight + customerWastage;
+        const goldBalance = goldGiven - (itemWeight + workshopWastage);
+
+        document.getElementById('job-workshop-wastage').value = workshopWastage.toFixed(3);
+        document.getElementById('job-customer-wastage').value = customerWastage.toFixed(3);
+        document.getElementById('job-total-gold').value = totalGoldForCustomer.toFixed(3);
+        document.getElementById('job-gold-balance').value = goldBalance.toFixed(3);
+    };
+
+    // Add event listeners to trigger automatic calculation
+    jobKaratage.addEventListener('change', calculateWastageAndBalance);
+    jobItemWeight.addEventListener('input', calculateWastageAndBalance);
+    jobGoldGiven.addEventListener('input', calculateWastageAndBalance);
+
 
     // --- JOB ORDER FORM: MULTIPLE IMAGE UPLOAD & DELETE ---
     const jobDesignImageInput = document.getElementById('job-design-image');
@@ -687,4 +692,6 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 </body>
 </html>
+
+
 
