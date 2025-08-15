@@ -48,7 +48,6 @@
 <body class="bg-gray-900 text-gray-200">
 
     <div class="flex">
-        <!-- CORRECTED: Removed the 'hidden' class to allow the transform to work correctly -->
         <aside id="sidebar" class="w-64 bg-gray-800 p-4 flex flex-col fixed h-full z-40 transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out no-print md:flex">
             <div class="flex items-center justify-between mb-8">
                 <div class="flex items-center">
@@ -412,6 +411,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 customerWastage = wastageAmount;
             }
             const totalGoldForCustomer = itemWeight + customerWastage;
+            // CORRECTED CALCULATION
             const goldBalance = goldGiven - (itemWeight + workshopWastage);
 
             document.getElementById('job-workshop-wastage').value = workshopWastage.toFixed(3);
