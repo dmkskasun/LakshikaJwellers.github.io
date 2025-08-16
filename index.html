@@ -598,6 +598,45 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('generate-invoice-btn').addEventListener('click', generateInvoiceAction);
     document.getElementById('generate-invoice-btn-mobile').addEventListener('click', generateInvoiceAction);
     
+    // --- SIGNATURE PAD SCRIPT ---
+    const signaturePadCanvas = document.getElementById('signature-pad');
+    if (signaturePadCanvas) {
+        const ctx = signaturePadCanvas.getContext('2d');
+        let isDrawing = false, lastX = 0, lastY = 0;
+        const initializeSignaturePad = () => Object.assign(ctx, { strokeStyle: '#000', lineWidth: 2, lineCap: 'round', lineJoin: 'round' });
+        const getCoords = (e) => {
+            const rect = signaturePadCanvas.getBoundingClientRect();
+            const touch = e.touches && e.touches[0];
+            return {
+                x: (touch ? touch.clientX : e.clientX) - rect.left,
+                y: (touch ? touch.clientY : e.clientY) - rect.top
+            };
+        };
+        const startDrawing = (e) => { e.preventDefault(); isDrawing = true; [lastX, lastY] = [getCoords(e).x, getCoords(e).y]; };
+        const draw = (e) => {
+            if (!isDrawing) return;
+            e.preventDefault();
+            const { x, y } = getCoords(e);
+            ctx.beginPath();
+            ctx.moveTo(lastX, lastY);
+            ctx.lineTo(x, y);
+            ctx.stroke();
+            [lastX, lastY] = [x, y];
+        };
+        const stopDrawing = () => { isDrawing = false; };
+
+        ['mousedown', 'touchstart'].forEach(event => signaturePadCanvas.addEventListener(event, startDrawing, { passive: false }));
+        ['mousemove', 'touchmove'].forEach(event => signaturePadCanvas.addEventListener(event, draw, { passive: false }));
+        ['mouseup', 'mouseleave', 'touchend'].forEach(event => signaturePadCanvas.addEventListener(event, stopDrawing));
+
+        document.getElementById('clear-signature-btn').addEventListener('click', () => {
+            ctx.clearRect(0, 0, signaturePadCanvas.width, signaturePadCanvas.height);
+        });
+        
+        initializeSignaturePad();
+    }
+
+    // --- PRINT & MODAL CLOSE CONTROLS ---
     let isPrinting = false; 
     const handlePrint = (modalToPrint) => {
         if (isPrinting || !modalToPrint) return;
