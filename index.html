@@ -183,32 +183,153 @@
     </div>
 
     <div id="item-details-modal" class="hidden fixed inset-0 bg-black bg-opacity-70 flex justify-center items-center p-2 z-50 no-print">
+        <div class="modal-container bg-gray-800 text-gray-200 rounded-lg shadow-2xl w-full max-w-3xl max-h-[90vh] flex flex-col">
+            <div class="p-5 border-b border-gray-700"><h3 id="item-modal-title" class="text-2xl font-bold">Add New Item</h3></div>
+            <div class="p-6 flex-grow overflow-y-auto space-y-6">
+                <div class="border-b border-gray-700 pb-4">
+                    <h4 class="text-lg font-semibold text-yellow-400 mb-3">Invoice Details</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+                        <div class="md:col-span-4"><label class="block text-sm">Description</label><input id="modal-item-desc" type="text" class="mt-1 bg-gray-700 p-2 rounded-lg w-full"></div>
+                        <div><label class="block text-sm">Karatage</label><select id="modal-item-karatage" class="mt-1 bg-gray-700 p-2 rounded-lg w-full"><option value="">N/A</option><option value="22K">22K</option><option value="21K">21K</option><option value="18K">18K</option><option value="16K">16K</option><option value="14K">14K</option><option value="9K">9K</option></select></div>
+                        <div><label class="block text-sm">Target Weight (g)</label><input id="modal-item-target-weight" type="number" step="0.001" class="mt-1 bg-gray-700 p-2 rounded-lg w-full"></div>
+                        <div><label class="block text-sm">Final Weight (g)</label><input id="modal-item-final-weight" type="number" step="0.001" class="mt-1 bg-gray-700 p-2 rounded-lg w-full"></div>
+                        <div><label class="block text-sm">Initial Price (LKR)</label><input id="modal-item-price" type="number" class="mt-1 bg-gray-700 p-2 rounded-lg w-full"></div>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="text-lg font-semibold text-yellow-400 mb-3">Workshop Specifications (Optional)</h4>
+                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div><label class="block text-sm">Size</label><input id="modal-ws-size" type="text" class="mt-1 bg-gray-700 p-2 rounded-lg w-full"></div>
+                        <div><label class="block text-sm">Stone Size (mm)</label><input id="modal-ws-stone-size" type="text" class="mt-1 bg-gray-700 p-2 rounded-lg w-full"></div>
+                        <div><label class="block text-sm">Dimensions (mm)</label><input id="modal-ws-dimensions" type="text" class="mt-1 bg-gray-700 p-2 rounded-lg w-full"></div>
+                        <div><label class="block text-sm">Gem Setting</label><select id="modal-ws-gem-setting" class="mt-1 bg-gray-700 p-2 rounded-lg w-full"><option value="">Select</option><option>Prong</option><option>Bezel</option><option>Pave</option></select></div>
+                        <div><label class="block text-sm">Stone Weight (carats)</label><input id="modal-ws-stone-weight" type="number" step="0.01" class="mt-1 bg-gray-700 p-2 rounded-lg w-full"></div>
+                        <div><label class="block text-sm">Gold Given (g)</label><input id="modal-ws-gold-given" type="number" step="0.001" class="mt-1 bg-gray-700 p-2 rounded-lg w-full"></div>
+                        <div class="md:col-span-3 grid grid-cols-2 gap-4">
+                           <div><label class="block text-sm">Workshop Wastage (g)</label><input id="modal-ws-wastage" type="text" class="mt-1 bg-gray-600 p-2 rounded-lg w-full" readonly></div>
+                           <div><label class="block text-sm">Gold Balance (g)</label><input id="modal-ws-balance" type="text" class="mt-1 bg-gray-600 p-2 rounded-lg w-full" readonly></div>
+                        </div>
+                        <div class="md:col-span-3">
+                            <label class="block text-sm">Design Images</label>
+                            <input type="file" id="modal-ws-images" accept="image/*" multiple class="mt-1 block w-full text-sm text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-gray-700 file:text-yellow-300 hover:file:bg-gray-600">
+                            <div id="modal-ws-image-gallery" class="mt-4 flex flex-wrap gap-4"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="p-4 bg-gray-900 border-t border-gray-700 flex justify-end space-x-3">
+                <button type="button" id="cancel-item-modal-btn" class="py-2 px-4 bg-gray-600 text-white rounded-lg hover:bg-gray-500">Cancel</button>
+                <button type="button" id="save-item-btn" class="py-2 px-4 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-500">Save Item</button>
+            </div>
         </div>
+    </div>
     
     <div id="invoice-modal" class="hidden fixed inset-0 bg-black bg-opacity-70 flex justify-center items-center p-2 z-50">
+        <div class="modal-container printable-area bg-white text-gray-800 rounded-lg shadow-2xl w-full max-w-4xl max-h-full flex flex-col">
+            <div class="flex-grow overflow-y-auto">
+                <div class="p-4 md:p-8 border-b border-gray-200 print-header-wrapper">
+                    <div class="w-full flex justify-between items-center print-header-container">
+                        <div class="company-details-print">
+                            <img src="logo.png" alt="Lakshika Jewellers Logo" class="object-contain">
+                            <div class="font-lora">
+                                <h2 class="text-3xl font-bold text-gray-900 tracking-wide font-playfair">LAKSHIKA JEWELLERS</h2>
+                                <p class="text-md text-gray-600 italic mt-1">Where Luxury Meets Style</p>
+                                <p class="text-md text-gray-600 mt-2">No. 220B, Galle Road, Walana, Panadura.</p>
+                                <p class="text-md text-gray-600">Tel: 076-4357920, 076-6244372, 076-1576536</p>
+                            </div>
+                        </div>
+                        <div class="invoice-title-print text-right">
+                            <h3 id="invoice-title" class="text-4xl font-bold text-gray-700 font-playfair">INVOICE</h3>
+                            <p class="text-base font-lora">ID: <span id="invoice-id" class="font-mono"></span></p>
+                            <p class="text-base font-lora">Date: <span id="invoice-date-display"></span></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="p-4 md:p-6">
+                    <div class="mb-4 pt-4">
+                        <h4 class="font-bold text-gray-700 mb-2">CUSTOMER DETAILS</h4>
+                        <p id="invoice-customer-name" class="font-semibold"></p>
+                        <p id="invoice-customer-contact"></p>
+                        <p id="invoice-delivery-date" class="text-sm text-gray-600 mt-1"></p>
+                        <p id="invoice-remark" class="text-sm text-gray-600 mt-1"></p>
+                    </div>
+                    <div class="mb-4 overflow-x-auto">
+                        <table class="w-full text-sm">
+                            <thead><tr class="border-b"><th class="p-2 text-left font-bold text-gray-600 w-2/5">DESCRIPTION</th><th class="p-2 text-left font-bold text-gray-600">KARATAGE</th><th class="p-2 text-left font-bold text-gray-600">WEIGHT</th><th class="p-2 text-right font-bold text-gray-600">PRICE (LKR)</th></tr></thead>
+                            <tbody id="invoice-items-body"></tbody>
+                        </table>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8 border-t pt-4">
+                        <div class="text-left">
+                            <h4 class="font-bold text-gray-700 mb-2">CUSTOMER SIGNATURE</h4>
+                            <canvas id="signature-pad" width="300" height="150"></canvas>
+                            <button id="clear-signature-btn" class="mt-2 text-sm text-blue-600 hover:text-blue-800 no-print">Clear Signature</button>
+                        </div>
+                        <div class="text-left md:text-right">
+                            <div class="space-y-2">
+                                   <div class="flex justify-between items-center"><p class="text-gray-600">Total Price:</p><p id="invoice-total-price" class="font-bold"></p></div>
+                                   <div id="invoice-adjustment-row" class="hidden flex justify-between items-center text-sm"><p class="text-gray-600">Weight Adjustments:</p><p id="invoice-price-adjustment" class="font-bold"></p></div>
+                                   <div class="flex justify-between items-center border-t pt-2 mt-2"><p class="text-gray-600 font-bold">Subtotal:</p><p id="invoice-final-price" class="font-bold"></p></div>
+                                   <div class="flex justify-between items-center"><p class="text-gray-600">Old Gold Value:</p><p id="invoice-old-gold" class="font-bold"></p></div>
+                                   <div class="flex justify-between items-center"><p class="text-gray-600">Advance Payment:</p><p id="invoice-advance" class="font-bold"></p></div>
+                                   <div class="flex justify-between items-center text-xl border-t-2 border-gray-500 pt-2 mt-2"><p class="font-bold text-gray-800">BALANCE DUE:</p><p id="invoice-balance" class="font-extrabold text-yellow-600"></p></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+             <div class="p-5 bg-gray-50 border-t flex-shrink-0 flex justify-end space-x-3 no-print">
+                  <button id="close-invoice-modal-btn" class="py-2 px-4 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300">Close</button>
+                  <button id="print-invoice-btn" class="py-2 px-4 bg-blue-500 text-white font-semibold rounded-lg hover:bg-blue-600">Print Invoice</button>
+             </div>
         </div>
+    </div>
     <div id="workshop-modal" class="hidden fixed inset-0 bg-black bg-opacity-70 flex justify-center items-center p-2 z-50">
+        <div class="modal-container printable-area bg-white text-gray-800 rounded-lg shadow-2xl w-full max-w-2xl max-h-full flex flex-col">
+            <div class="flex-grow overflow-y-auto p-4 md:p-6">
+                <div class="text-center border-b pb-4 mb-4">
+                    <h2 class="text-2xl font-bold text-gray-900">WORKSHOP ORDER</h2>
+                    <p class="text-sm">Invoice ID: <span id="workshop-invoice-id" class="font-mono"></span> | Date: <span id="workshop-date"></span></p>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4 text-sm">
+                    <div><p class="font-bold">Item Description:</p><p id="workshop-item-desc"></p></div>
+                    <div><p class="font-bold">Karatage:</p><p id="workshop-karatage-display"></p></div>
+                    <div><p class="font-bold">Target Weight (g):</p><p id="workshop-target-weight-display"></p></div>
+                    <div><p class="font-bold">Final Weight (g):</p><p id="workshop-final-weight-display"></p></div>
+                    <div><p class="font-bold">Workshop Wastage (g):</p><p id="workshop-wastage-display"></p></div>
+                    <div><p class="font-bold">Size:</p><p id="workshop-size"></p></div>
+                    <div><p class="font-bold">Stone Size:</p><p id="workshop-stone-size"></p></div>
+                    <div><p class="font-bold">Dimensions:</p><p id="workshop-dimensions"></p></div>
+                    <div><p class="font-bold">Gem Setting:</p><p id="workshop-gem-setting"></p></div>
+                    <div><p class="font-bold">Gold Given (g):</p><p id="workshop-gold-given"></p></div>
+                    <div><p class="font-bold">Stone Weight (carats):</p><p id="workshop-stone-weight"></p></div>
+                    <div><p class="font-bold">Gold Balance to Return (g):</p><p id="workshop-gold-balance"></p></div>
+                    <div class="col-span-1 sm:col-span-2"><p class="font-bold">Remark:</p><p id="workshop-remark"></p></div>
+                    <div class="col-span-1 sm:col-span-2">
+                        <p class="font-bold">Design Images:</p>
+                        <div id="workshop-design-images-container" class="mt-2 flex flex-wrap gap-2"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="p-5 bg-gray-50 border-t flex-shrink-0 flex justify-end space-x-3 no-print">
+                <button id="close-workshop-modal-btn" class="py-2 px-4 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300">Close</button>
+                <button id="print-workshop-btn" class="py-2 px-4 bg-blue-500 text-white font-semibold rounded-lg hover:bg-blue-600">Print Order</button>
+            </div>
         </div>
+    </div>
 
 <script>
-// The entire script from the previous turn goes here.
-// It is complete and does not need changes for this fix.
-// The fix was purely in the HTML/CSS layout for mobile.
 document.addEventListener('DOMContentLoaded', function() {
     let orderItems = [];
     let currentItemImages = [];
     let currentlyEditingIndex = null;
 
     const GOLD_COEFFICIENTS = {
-        '22K': { purity: 0.916, wastage: 0.075 },
-        '21K': { purity: 0.875, wastage: 0.075 },
-        '18K': { purity: 0.75,  wastage: 0.1 },
-        '16K': { purity: 0.66,  wastage: 0.12 },
-        '14K': { purity: 0.583, wastage: 0.12 },
-        '9K':  { purity: 0.375, wastage: 0.12 }
+        '22K': { purity: 0.916, wastage: 0.075 }, '21K': { purity: 0.875, wastage: 0.075 },
+        '18K': { purity: 0.75,  wastage: 0.1 }, '16K': { purity: 0.66,  wastage: 0.12 },
+        '14K': { purity: 0.583, wastage: 0.12 }, '9K':  { purity: 0.375, wastage: 0.12 }
     };
-
-    const PER_GRAM_PRICE = 21500;
+    const PER_GRAM_PRICE = 21500; 
 
     const sidebar = document.getElementById('sidebar');
     const menuToggleBtn = document.getElementById('menu-toggle-btn');
@@ -216,14 +337,12 @@ document.addEventListener('DOMContentLoaded', function() {
     const navLinks = document.querySelectorAll('.nav-link');
     const mobileFooter = document.getElementById('job-order-mobile-footer');
     const views = document.querySelectorAll('.view');
-    
     const itemDetailsModal = document.getElementById('item-details-modal');
     const openItemModalBtn = document.getElementById('open-item-modal-btn');
     const cancelItemModalBtn = document.getElementById('cancel-item-modal-btn');
     const saveItemBtn = document.getElementById('save-item-btn');
     const orderItemsList = document.getElementById('order-items-list');
     const itemModalTitle = document.getElementById('item-modal-title');
-    
     const modalInputs = {
         desc: document.getElementById('modal-item-desc'),
         karatage: document.getElementById('modal-item-karatage'),
@@ -241,11 +360,9 @@ document.addEventListener('DOMContentLoaded', function() {
         wsImages: document.getElementById('modal-ws-images'),
         wsImageGallery: document.getElementById('modal-ws-image-gallery')
     };
-    
     const invoiceModal = document.getElementById('invoice-modal');
     const workshopModal = document.getElementById('workshop-modal');
 
-    // --- NAVIGATION ---
     const openSidebar = () => sidebar.classList.remove('-translate-x-full');
     const closeSidebar = () => sidebar.classList.add('-translate-x-full');
     if (menuToggleBtn) menuToggleBtn.addEventListener('click', openSidebar);
@@ -265,7 +382,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // --- PER-ITEM MODAL LOGIC (ADD & EDIT) ---
     const resetItemModal = () => {
         Object.values(modalInputs).forEach(input => { if (input.type !== 'file') input.value = ''; });
         currentItemImages = [];
@@ -284,13 +400,11 @@ document.addEventListener('DOMContentLoaded', function() {
         resetItemModal();
         const item = orderItems[index];
         currentlyEditingIndex = index;
-
         modalInputs.desc.value = item.description;
         modalInputs.karatage.value = item.karatage;
         modalInputs.targetWeight.value = item.targetWeight;
         modalInputs.finalWeight.value = item.finalWeight;
         modalInputs.price.value = item.price;
-        
         const specs = item.workshopSpecs;
         modalInputs.wsSize.value = specs.size;
         modalInputs.wsStoneSize.value = specs.stoneSize;
@@ -301,7 +415,6 @@ document.addEventListener('DOMContentLoaded', function() {
         calculateModalWastage(); 
         currentItemImages = [...specs.images];
         renderModalImageGallery();
-
         itemModalTitle.textContent = 'Edit Item';
         saveItemBtn.textContent = 'Update Item';
         itemDetailsModal.classList.remove('hidden');
@@ -358,7 +471,6 @@ document.addEventListener('DOMContentLoaded', function() {
             alert('A valid Description and Initial Price are required.');
             return;
         }
-        
         const isWorkshopJob = Object.values(modalInputs).some(input => input.id.startsWith('modal-ws-') && input.value.trim() !== '' && input.type !== 'file') || currentItemImages.length > 0;
         
         const newItemData = {
@@ -385,7 +497,6 @@ document.addEventListener('DOMContentLoaded', function() {
         } else {
             orderItems.push(newItemData);
         }
-
         renderOrderItems();
         itemDetailsModal.classList.add('hidden');
     });
@@ -409,7 +520,6 @@ document.addEventListener('DOMContentLoaded', function() {
         const printBtn = e.target.closest('.print-workshop-btn');
         const editBtn = e.target.closest('.edit-item-btn');
         const removeBtn = e.target.closest('.remove-item-btn');
-        
         if (printBtn) { populateAndShowWorkshopModal(parseInt(printBtn.dataset.index, 10)); }
         if (editBtn) { openModalForEdit(parseInt(editBtn.dataset.index, 10)); }
         if (removeBtn) {
@@ -422,10 +532,8 @@ document.addEventListener('DOMContentLoaded', function() {
         const item = orderItems[itemIndex];
         if (!item || !item.isWorkshopJob) return;
         const specs = item.workshopSpecs;
-        
         workshopModal.querySelector('#workshop-invoice-id').textContent = '#2514';
         workshopModal.querySelector('#workshop-date').textContent = new Date().toLocaleDateString('en-CA');
-        
         const remark = document.getElementById('job-remark').value;
         workshopModal.querySelector('#workshop-remark').textContent = remark || 'N/A';
         workshopModal.querySelector('#workshop-item-desc').textContent = item.description;
@@ -433,13 +541,13 @@ document.addEventListener('DOMContentLoaded', function() {
         workshopModal.querySelector('#workshop-target-weight-display').textContent = item.targetWeight > 0 ? item.targetWeight.toFixed(3) + ' g' : '';
         workshopModal.querySelector('#workshop-final-weight-display').textContent = item.finalWeight > 0 ? item.finalWeight.toFixed(3) + ' g' : '';
         workshopModal.querySelector('#workshop-wastage-display').textContent = specs.wastage > 0 ? specs.wastage.toFixed(3) + ' g' : '';
-        workshopModal.querySelector('#workshop-size').textContent = specs.size;
-        workshopModal.querySelector('#workshop-stone-size').textContent = specs.stoneSize;
-        workshopModal.querySelector('#workshop-dimensions').textContent = specs.dimensions;
-        workshopModal.querySelector('#workshop-gem-setting').textContent = specs.gemSetting;
+        workshopModal.querySelector('#workshop-size').textContent = specs.size || 'N/A';
+        workshopModal.querySelector('#workshop-stone-size').textContent = specs.stoneSize || 'N/A';
+        workshopModal.querySelector('#workshop-dimensions').textContent = specs.dimensions || 'N/A';
+        workshopModal.querySelector('#workshop-gem-setting').textContent = specs.gemSetting || 'N/A';
         workshopModal.querySelector('#workshop-gold-given').textContent = specs.goldGiven > 0 ? specs.goldGiven.toFixed(3) + ' g' : '';
         workshopModal.querySelector('#workshop-stone-weight').textContent = specs.stoneWeight > 0 ? specs.stoneWeight.toFixed(2) + ' carats' : '';
-        workshopModal.querySelector('#workshop-gold-balance').textContent = specs.balance.toFixed(3) + ' g';
+        workshopModal.querySelector('#workshop-gold-balance').textContent = specs.balance ? specs.balance.toFixed(3) + ' g' : '0.000 g';
         
         const imageContainer = workshopModal.querySelector('#workshop-design-images-container');
         imageContainer.innerHTML = '';
@@ -448,7 +556,6 @@ document.addEventListener('DOMContentLoaded', function() {
             reader.onload = e => imageContainer.innerHTML += `<img src="${e.target.result}" class="rounded-lg w-32 h-32 object-cover">`;
             reader.readAsDataURL(file);
         });
-
         workshopModal.classList.remove('hidden');
     };
     
@@ -457,10 +564,8 @@ document.addEventListener('DOMContentLoaded', function() {
             alert('Cannot generate an invoice with no items.');
             return;
         }
-
         let isFinalInvoice = orderItems.some(item => item.finalWeight > 0);
         let totalAdjustment = 0;
-
         invoiceModal.querySelector('#invoice-title').textContent = isFinalInvoice ? 'FINAL INVOICE' : 'INVOICE';
         
         const itemsHtml = orderItems.map(item => {
@@ -468,7 +573,6 @@ document.addEventListener('DOMContentLoaded', function() {
             if (isFinalInvoice && item.finalWeight > 0 && item.targetWeight > 0 && item.karatage && GOLD_COEFFICIENTS[item.karatage]) {
                 const diff = item.finalWeight - item.targetWeight;
                 const coeffs = GOLD_COEFFICIENTS[item.karatage];
-
                 if (diff < 0) {
                     let credit = Math.abs(diff) * coeffs.purity * PER_GRAM_PRICE;
                     totalAdjustment -= credit;
@@ -479,8 +583,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     weightAdjustmentText = ` (Extra: +LKR ${extraCost.toFixed(2)})`;
                 }
             }
-            return `
-                <tr class="border-b">
+            return `<tr class="border-b">
                     <td class="p-2">${item.description}<span class="text-xs italic text-gray-500">${weightAdjustmentText}</span></td>
                     <td class="p-2">${item.karatage || 'N/A'}</td>
                     <td class="p-2">${(item.finalWeight > 0 ? item.finalWeight : item.targetWeight).toFixed(3)} g</td>
@@ -503,9 +606,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const remarkEl = invoiceModal.querySelector('#invoice-remark');
         remarkEl.textContent = remark ? `Remark: ${remark}` : '';
         remarkEl.style.display = remark ? 'block' : 'none';
-        
         invoiceModal.querySelector('#invoice-items-body').innerHTML = itemsHtml;
-        
         invoiceModal.querySelector('#invoice-total-price').textContent = `LKR ${initialTotalPrice.toFixed(2)}`;
         const adjustmentRow = invoiceModal.querySelector('#invoice-adjustment-row');
         if (isFinalInvoice && totalAdjustment !== 0) {
@@ -516,12 +617,10 @@ document.addEventListener('DOMContentLoaded', function() {
         } else {
             adjustmentRow.style.display = 'none';
         }
-        
         invoiceModal.querySelector('#invoice-final-price').textContent = `LKR ${finalTotalPrice.toFixed(2)}`;
         invoiceModal.querySelector('#invoice-old-gold').textContent = `LKR ${oldGoldValue.toFixed(2)}`;
         invoiceModal.querySelector('#invoice-advance').textContent = `LKR ${advance.toFixed(2)}`;
         invoiceModal.querySelector('#invoice-balance').textContent = `LKR ${balance.toFixed(2)}`;
-        
         invoiceModal.classList.remove('hidden');
     };
     
