@@ -133,37 +133,43 @@
                 <div id="job-orders-view" class="view hidden pb-32 md:pb-0"> 
                     <h2 class="text-3xl font-bold mb-6 text-yellow-400">Create New Job Order</h2>
                     <div class="bg-gray-800 p-4 md:p-8 rounded-xl shadow-lg">
-                        <form id="job-order-form">
+                        <form id="job-order-form" onsubmit="return false;">
                             <div class="border-b border-gray-700 pb-6 mb-6">
                                 <h3 class="text-xl font-bold text-white mb-4">Customer & Invoice Details</h3>
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-end">
                                     <input id="job-customer-name" type="text" placeholder="Customer Name" class="bg-gray-700 p-3 rounded-lg w-full">
                                     <input id="job-contact-number" type="text" placeholder="Contact Number" class="bg-gray-700 p-3 rounded-lg w-full">
-                                    <input id="job-delivery-date" type="date" class="bg-gray-700 p-3 rounded-lg w-full text-gray-400">
+                                    <div>
+                                        <label for="job-delivery-date" class="block text-sm font-medium text-gray-400 mb-1">Delivery Date</label>
+                                        <input id="job-delivery-date" type="date" class="bg-gray-700 p-3 rounded-lg w-full text-gray-400">
+                                    </div>
                                     <input id="job-old-gold" type="number" placeholder="Old Gold Value (LKR)" class="bg-gray-700 p-3 rounded-lg w-full">
                                     <input id="job-advance" type="number" placeholder="Advance Payment (LKR)" class="bg-gray-700 p-3 rounded-lg w-full">
-                                    <input id="job-remark" type="text" placeholder="Remark" class="bg-gray-700 p-3 rounded-lg w-full md:col-span-2">
+                                    <div class="md:col-span-2">
+                                        <label for="job-remark" class="block text-sm font-medium text-gray-400 mb-1">Remark</label>
+                                        <input id="job-remark" type="text" placeholder="Add a note for the invoice or workshop" class="bg-gray-700 p-3 rounded-lg w-full">
+                                    </div>
                                 </div>
                             </div>
 
                             <div class="border-b border-gray-700 pb-6 mb-6">
                                 <h3 class="text-xl font-bold text-white mb-4">Order Items</h3>
                                 <div class="p-4 rounded-lg bg-gray-700/50">
-                                    <p class="text-gray-400 text-sm mb-4">Use the button below to add or edit items in the order. For each item, you can add unique workshop specifications if it's a custom job.</p>
+                                    <p class="text-gray-400 text-sm mb-4">Use the button below to add or edit items in the order. You can add unique workshop specifications for custom jobs.</p>
                                     <button type="button" id="open-item-modal-btn" class="bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 px-6 rounded-lg w-full md:w-auto flex items-center justify-center">
                                         <i class="fas fa-plus mr-2"></i> Add New Item to Order
                                     </button>
                                 </div>
                                 <div class="mt-6 overflow-x-auto">
                                     <table class="w-full text-sm text-left">
-                                        <thead class="text-gray-400"><tr><th class="p-2">Description</th><th class="p-2">Price (LKR)</th><th class="p-2 text-right">Actions</th></tr></thead>
+                                        <thead class="text-gray-400"><tr><th class="p-2">Description</th><th class="p-2">Initial Price (LKR)</th><th class="p-2 text-right">Actions</th></tr></thead>
                                         <tbody id="order-items-list" class="divide-y divide-gray-700"></tbody>
                                     </table>
                                 </div>
                             </div>
                            
                             <div class="mt-8 flex justify-end">
-                                <button type="button" id="generate-invoice-btn" class="bg-yellow-400 text-gray-900 font-bold py-3 px-6 rounded-lg hover:bg-yellow-300">Generate Customer Invoice</button>
+                                <button type="button" id="generate-invoice-btn" class="bg-yellow-400 text-gray-900 font-bold py-3 px-6 rounded-lg hover:bg-yellow-300">Generate Invoice</button>
                             </div>
                         </form>
                     </div>
@@ -173,7 +179,7 @@
     </div>
     
     <div id="job-order-mobile-footer" class="fixed bottom-0 left-0 right-0 bg-gray-800 p-4 border-t border-gray-700 z-30 md:hidden hidden">
-        <button type="button" id="generate-invoice-btn-mobile" class="bg-yellow-400 text-gray-900 font-bold py-3 px-6 rounded-lg hover:bg-yellow-300 w-full">Generate Customer Invoice</button>
+        <button type="button" id="generate-invoice-btn-mobile" class="bg-yellow-400 text-gray-900 font-bold py-3 px-6 rounded-lg hover:bg-yellow-300 w-full">Generate Invoice</button>
     </div>
 
     <div id="item-details-modal" class="hidden fixed inset-0 bg-black bg-opacity-70 flex justify-center items-center p-2 z-50 no-print">
@@ -182,11 +188,12 @@
             <div class="p-6 flex-grow overflow-y-auto space-y-6">
                 <div class="border-b border-gray-700 pb-4">
                     <h4 class="text-lg font-semibold text-yellow-400 mb-3">Invoice Details</h4>
-                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                        <div class="md:col-span-2"><label class="block text-sm">Description</label><input id="modal-item-desc" type="text" class="mt-1 bg-gray-700 p-2 rounded-lg w-full"></div>
-                        <div><label class="block text-sm">Karatage</label><select id="modal-item-karatage" class="mt-1 bg-gray-700 p-2 rounded-lg w-full"><option value="">N/A</option><option>22K</option><option>18K</option><option>14K</option></select></div>
-                        <div><label class="block text-sm">Weight (g)</label><input id="modal-item-weight" type="number" step="0.001" class="mt-1 bg-gray-700 p-2 rounded-lg w-full"></div>
-                        <div class="md:col-span-4"><label class="block text-sm">Price (LKR)</label><input id="modal-item-price" type="number" class="mt-1 bg-gray-700 p-2 rounded-lg w-full"></div>
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+                        <div class="md:col-span-4"><label class="block text-sm">Description</label><input id="modal-item-desc" type="text" class="mt-1 bg-gray-700 p-2 rounded-lg w-full"></div>
+                        <div><label class="block text-sm">Karatage</label><select id="modal-item-karatage" class="mt-1 bg-gray-700 p-2 rounded-lg w-full"><option value="">N/A</option><option value="22K">22K</option><option value="21K">21K</option><option value="18K">18K</option><option value="16K">16K</option><option value="14K">14K</option><option value="9K">9K</option></select></div>
+                        <div><label class="block text-sm">Target Weight (g)</label><input id="modal-item-target-weight" type="number" step="0.001" class="mt-1 bg-gray-700 p-2 rounded-lg w-full"></div>
+                        <div><label class="block text-sm">Final Weight (g)</label><input id="modal-item-final-weight" type="number" step="0.001" class="mt-1 bg-gray-700 p-2 rounded-lg w-full"></div>
+                        <div><label class="block text-sm">Initial Price (LKR)</label><input id="modal-item-price" type="number" class="mt-1 bg-gray-700 p-2 rounded-lg w-full"></div>
                     </div>
                 </div>
                 <div>
@@ -232,7 +239,7 @@
                             </div>
                         </div>
                         <div class="invoice-title-print text-right">
-                            <h3 class="text-4xl font-bold text-gray-700 font-playfair">INVOICE</h3>
+                            <h3 id="invoice-title" class="text-4xl font-bold text-gray-700 font-playfair">INVOICE</h3>
                             <p class="text-base font-lora">ID: <span id="invoice-id" class="font-mono"></span></p>
                             <p class="text-base font-lora">Date: <span id="invoice-date-display"></span></p>
                         </div>
@@ -244,6 +251,7 @@
                         <p id="invoice-customer-name" class="font-semibold"></p>
                         <p id="invoice-customer-contact"></p>
                         <p id="invoice-delivery-date" class="text-sm text-gray-600 mt-1"></p>
+                        <p id="invoice-remark" class="text-sm text-gray-600 mt-1"></p>
                     </div>
                     <div class="mb-4 overflow-x-auto">
                         <table class="w-full text-sm">
@@ -260,9 +268,11 @@
                         <div class="text-left md:text-right">
                             <div class="space-y-2">
                                    <div class="flex justify-between items-center"><p class="text-gray-600">Total Price:</p><p id="invoice-total-price" class="font-bold"></p></div>
+                                   <div id="invoice-adjustment-row" class="hidden flex justify-between items-center text-sm"><p class="text-gray-600">Weight Adjustments:</p><p id="invoice-price-adjustment" class="font-bold"></p></div>
+                                   <div class="flex justify-between items-center border-t pt-2 mt-2"><p class="text-gray-600 font-bold">Subtotal:</p><p id="invoice-final-price" class="font-bold"></p></div>
                                    <div class="flex justify-between items-center"><p class="text-gray-600">Old Gold Value:</p><p id="invoice-old-gold" class="font-bold"></p></div>
                                    <div class="flex justify-between items-center"><p class="text-gray-600">Advance Payment:</p><p id="invoice-advance" class="font-bold"></p></div>
-                                   <div class="flex justify-between items-center text-xl border-t pt-2 mt-2"><p class="font-bold text-gray-800">BALANCE DUE:</p><p id="invoice-balance" class="font-extrabold text-yellow-600"></p></div>
+                                   <div class="flex justify-between items-center text-xl border-t-2 border-gray-500 pt-2 mt-2"><p class="font-bold text-gray-800">BALANCE DUE:</p><p id="invoice-balance" class="font-extrabold text-yellow-600"></p></div>
                             </div>
                         </div>
                     </div>
@@ -282,10 +292,10 @@
                     <p class="text-sm">Invoice ID: <span id="workshop-invoice-id" class="font-mono"></span> | Date: <span id="workshop-date"></span></p>
                 </div>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4 text-sm">
-                    <div><p class="font-bold">Delivery Date:</p><p id="workshop-delivery-date"></p></div>
                     <div><p class="font-bold">Item Description:</p><p id="workshop-item-desc"></p></div>
                     <div><p class="font-bold">Karatage:</p><p id="workshop-karatage-display"></p></div>
-                    <div><p class="font-bold">Final Item Weight (g):</p><p id="workshop-item-weight-display"></p></div>
+                    <div><p class="font-bold">Target Weight (g):</p><p id="workshop-target-weight-display"></p></div>
+                    <div><p class="font-bold">Final Weight (g):</p><p id="workshop-final-weight-display"></p></div>
                     <div><p class="font-bold">Workshop Wastage (g):</p><p id="workshop-wastage-display"></p></div>
                     <div><p class="font-bold">Size:</p><p id="workshop-size"></p></div>
                     <div><p class="font-bold">Stone Size:</p><p id="workshop-stone-size"></p></div>
@@ -294,6 +304,7 @@
                     <div><p class="font-bold">Gold Given (g):</p><p id="workshop-gold-given"></p></div>
                     <div><p class="font-bold">Stone Weight (carats):</p><p id="workshop-stone-weight"></p></div>
                     <div><p class="font-bold">Gold Balance to Return (g):</p><p id="workshop-gold-balance"></p></div>
+                    <div class="col-span-1 sm:col-span-2"><p class="font-bold">Remark:</p><p id="workshop-remark"></p></div>
                     <div class="col-span-1 sm:col-span-2">
                         <p class="font-bold">Design Images:</p>
                         <div id="workshop-design-images-container" class="mt-2 flex flex-wrap gap-2"></div>
@@ -313,14 +324,17 @@ document.addEventListener('DOMContentLoaded', function() {
     let currentItemImages = [];
     let currentlyEditingIndex = null;
 
-    // --- CACHE DOM ELEMENTS ---
-    const sidebar = document.getElementById('sidebar');
-    const menuToggleBtn = document.getElementById('menu-toggle-btn');
-    const closeMenuBtn = document.getElementById('close-menu-btn');
-    const navLinks = document.querySelectorAll('.nav-link');
-    const mobileFooter = document.getElementById('job-order-mobile-footer');
-    const views = document.querySelectorAll('.view');
-    
+    const GOLD_COEFFICIENTS = {
+        '22K': { purity: 0.916, wastage: 0.075 },
+        '21K': { purity: 0.875, wastage: 0.075 },
+        '18K': { purity: 0.75,  wastage: 0.1 },
+        '16K': { purity: 0.66,  wastage: 0.12 },
+        '14K': { purity: 0.583, wastage: 0.12 },
+        '9K':  { purity: 0.375, wastage: 0.12 }
+    };
+
+    const PER_GRAM_PRICE = 21500; // Example price per gram for pure gold, adjust as needed
+
     const itemDetailsModal = document.getElementById('item-details-modal');
     const openItemModalBtn = document.getElementById('open-item-modal-btn');
     const cancelItemModalBtn = document.getElementById('cancel-item-modal-btn');
@@ -331,7 +345,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const modalInputs = {
         desc: document.getElementById('modal-item-desc'),
         karatage: document.getElementById('modal-item-karatage'),
-        weight: document.getElementById('modal-item-weight'),
+        targetWeight: document.getElementById('modal-item-target-weight'),
+        finalWeight: document.getElementById('modal-item-final-weight'),
         price: document.getElementById('modal-item-price'),
         wsSize: document.getElementById('modal-ws-size'),
         wsStoneSize: document.getElementById('modal-ws-stone-size'),
@@ -349,11 +364,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const workshopModal = document.getElementById('workshop-modal');
 
     // --- NAVIGATION ---
-    const openSidebar = () => sidebar.classList.remove('-translate-x-full');
-    const closeSidebar = () => sidebar.classList.add('-translate-x-full');
-    if (menuToggleBtn) menuToggleBtn.addEventListener('click', openSidebar);
-    if (closeMenuBtn) closeMenuBtn.addEventListener('click', closeSidebar);
-    document.getElementById('logout-btn').addEventListener('click', (e) => { e.preventDefault(); });
+    const navLinks = document.querySelectorAll('.nav-link');
+    const views = document.querySelectorAll('.view');
     navLinks.forEach(link => {
         link.addEventListener('click', function(e) {
             e.preventDefault();
@@ -363,8 +375,6 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById(viewId + '-view').classList.remove('hidden');
             navLinks.forEach(nav => nav.classList.remove('active'));
             this.classList.add('active');
-            if (mobileFooter) mobileFooter.classList.toggle('hidden', viewId !== 'job-orders');
-            if (window.innerWidth < 768) closeSidebar();
         });
     });
 
@@ -390,20 +400,20 @@ document.addEventListener('DOMContentLoaded', function() {
 
         modalInputs.desc.value = item.description;
         modalInputs.karatage.value = item.karatage;
-        modalInputs.weight.value = item.weight;
+        modalInputs.targetWeight.value = item.targetWeight;
+        modalInputs.finalWeight.value = item.finalWeight;
         modalInputs.price.value = item.price;
-        if (item.isWorkshopJob) {
-            const specs = item.workshopSpecs;
-            modalInputs.wsSize.value = specs.size;
-            modalInputs.wsStoneSize.value = specs.stoneSize;
-            modalInputs.wsDimensions.value = specs.dimensions;
-            modalInputs.wsGemSetting.value = specs.gemSetting;
-            modalInputs.wsStoneWeight.value = specs.stoneWeight;
-            modalInputs.wsGoldGiven.value = specs.goldGiven;
-            calculateModalWastage(); 
-            currentItemImages = [...specs.images];
-            renderModalImageGallery();
-        }
+        
+        const specs = item.workshopSpecs;
+        modalInputs.wsSize.value = specs.size;
+        modalInputs.wsStoneSize.value = specs.stoneSize;
+        modalInputs.wsDimensions.value = specs.dimensions;
+        modalInputs.wsGemSetting.value = specs.gemSetting;
+        modalInputs.wsStoneWeight.value = specs.stoneWeight;
+        modalInputs.wsGoldGiven.value = specs.goldGiven;
+        calculateModalWastage(); 
+        currentItemImages = [...specs.images];
+        renderModalImageGallery();
 
         itemModalTitle.textContent = 'Edit Item';
         saveItemBtn.textContent = 'Update Item';
@@ -415,18 +425,18 @@ document.addEventListener('DOMContentLoaded', function() {
 
     const calculateModalWastage = () => {
         const karatage = modalInputs.karatage.value;
-        const weight = parseFloat(modalInputs.weight.value) || 0;
+        const weight = parseFloat(modalInputs.targetWeight.value) || 0;
         const goldGiven = parseFloat(modalInputs.wsGoldGiven.value) || 0;
         let wastage = 0;
-        if (weight > 0 && karatage) {
-            wastage = (karatage === '22K') ? (weight / 8) * 0.45 : weight * 0.10;
+        if (weight > 0 && GOLD_COEFFICIENTS[karatage]) {
+            wastage = weight * GOLD_COEFFICIENTS[karatage].wastage;
         }
         const balance = goldGiven - (weight + wastage);
         modalInputs.wsWastage.value = wastage.toFixed(3);
         modalInputs.wsBalance.value = balance.toFixed(3);
     };
 
-    [modalInputs.karatage, modalInputs.weight, modalInputs.wsGoldGiven].forEach(el => el.addEventListener('input', calculateModalWastage));
+    [modalInputs.karatage, modalInputs.targetWeight, modalInputs.wsGoldGiven].forEach(el => el.addEventListener('input', calculateModalWastage));
 
     const renderModalImageGallery = () => {
         modalInputs.wsImageGallery.innerHTML = '';
@@ -435,10 +445,7 @@ document.addEventListener('DOMContentLoaded', function() {
             reader.onload = e => {
                 const previewWrapper = document.createElement('div');
                 previewWrapper.className = 'relative w-24 h-24';
-                previewWrapper.innerHTML = `
-                    <img src="${e.target.result}" class="w-full h-full object-cover rounded-md">
-                    <button type="button" data-index="${index}" class="remove-image-btn absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs">&times;</button>
-                `;
+                previewWrapper.innerHTML = `<img src="${e.target.result}" class="w-full h-full object-cover rounded-md"><button type="button" data-index="${index}" class="remove-image-btn absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs">&times;</button>`;
                 modalInputs.wsImageGallery.appendChild(previewWrapper);
             };
             reader.readAsDataURL(file);
@@ -459,31 +466,27 @@ document.addEventListener('DOMContentLoaded', function() {
 
     saveItemBtn.addEventListener('click', () => {
         const description = modalInputs.desc.value.trim();
-        const price = parseFloat(modalInputs.price.value);
-        if (!description || isNaN(price) || price <= 0) {
-            alert('A valid Description and Price are required.');
+        const price = parseFloat(modalInputs.price.value) || 0;
+        if (!description || price <= 0) {
+            alert('A valid Description and Initial Price are required.');
             return;
         }
         
-        const size = modalInputs.wsSize.value.trim();
-        const stoneSize = modalInputs.wsStoneSize.value.trim();
-        const dimensions = modalInputs.wsDimensions.value.trim();
-        const goldGiven = parseFloat(modalInputs.wsGoldGiven.value) || 0;
-
-        const isWorkshopJob = goldGiven > 0 || size || stoneSize || dimensions || currentItemImages.length > 0;
+        const isWorkshopJob = Object.values(modalInputs).some(input => input.id.startsWith('modal-ws-') && input.value.trim() !== '' && input.type !== 'file') || currentItemImages.length > 0;
         
         const newItemData = {
             description, price,
             karatage: modalInputs.karatage.value,
-            weight: parseFloat(modalInputs.weight.value) || 0,
+            targetWeight: parseFloat(modalInputs.targetWeight.value) || 0,
+            finalWeight: parseFloat(modalInputs.finalWeight.value) || 0,
             isWorkshopJob: isWorkshopJob,
             workshopSpecs: {
-                size: size,
-                stoneSize: stoneSize,
-                dimensions: dimensions,
+                size: modalInputs.wsSize.value,
+                stoneSize: modalInputs.wsStoneSize.value,
+                dimensions: modalInputs.wsDimensions.value,
                 gemSetting: modalInputs.wsGemSetting.value,
                 stoneWeight: parseFloat(modalInputs.wsStoneWeight.value) || 0,
-                goldGiven: goldGiven,
+                goldGiven: parseFloat(modalInputs.wsGoldGiven.value) || 0,
                 wastage: parseFloat(modalInputs.wsWastage.value) || 0,
                 balance: parseFloat(modalInputs.wsBalance.value) || 0,
                 images: [...currentItemImages]
@@ -520,12 +523,8 @@ document.addEventListener('DOMContentLoaded', function() {
         const editBtn = e.target.closest('.edit-item-btn');
         const removeBtn = e.target.closest('.remove-item-btn');
         
-        if (printBtn) {
-            populateAndShowWorkshopModal(parseInt(printBtn.dataset.index, 10));
-        }
-        if (editBtn) {
-            openModalForEdit(parseInt(editBtn.dataset.index, 10));
-        }
+        if (printBtn) { populateAndShowWorkshopModal(parseInt(printBtn.dataset.index, 10)); }
+        if (editBtn) { openModalForEdit(parseInt(editBtn.dataset.index, 10)); }
         if (removeBtn) {
             orderItems.splice(parseInt(removeBtn.dataset.index, 10), 1);
             renderOrderItems();
@@ -539,18 +538,21 @@ document.addEventListener('DOMContentLoaded', function() {
         
         workshopModal.querySelector('#workshop-invoice-id').textContent = '#2514';
         workshopModal.querySelector('#workshop-date').textContent = new Date().toLocaleDateString('en-CA');
-        workshopModal.querySelector('#workshop-delivery-date').textContent = document.getElementById('job-delivery-date').value;
+        
+        const remark = document.getElementById('job-remark').value;
+        workshopModal.querySelector('#workshop-remark').textContent = remark || 'N/A';
         workshopModal.querySelector('#workshop-item-desc').textContent = item.description;
         workshopModal.querySelector('#workshop-karatage-display').textContent = item.karatage;
-        workshopModal.querySelector('#workshop-item-weight-display').textContent = (item.weight || 0).toFixed(3) + ' g';
-        workshopModal.querySelector('#workshop-wastage-display').textContent = specs.wastage.toFixed(3) + ' g';
-        workshopModal.querySelector('#workshop-gold-balance').textContent = specs.balance.toFixed(3) + ' g';
+        workshopModal.querySelector('#workshop-target-weight-display').textContent = item.targetWeight > 0 ? item.targetWeight.toFixed(3) + ' g' : '';
+        workshopModal.querySelector('#workshop-final-weight-display').textContent = item.finalWeight > 0 ? item.finalWeight.toFixed(3) + ' g' : '';
+        workshopModal.querySelector('#workshop-wastage-display').textContent = specs.wastage > 0 ? specs.wastage.toFixed(3) + ' g' : '';
         workshopModal.querySelector('#workshop-size').textContent = specs.size;
         workshopModal.querySelector('#workshop-stone-size').textContent = specs.stoneSize;
         workshopModal.querySelector('#workshop-dimensions').textContent = specs.dimensions;
         workshopModal.querySelector('#workshop-gem-setting').textContent = specs.gemSetting;
-        workshopModal.querySelector('#workshop-gold-given').textContent = specs.goldGiven.toFixed(3) + ' g';
-        workshopModal.querySelector('#workshop-stone-weight').textContent = specs.stoneWeight.toFixed(2) + ' carats';
+        workshopModal.querySelector('#workshop-gold-given').textContent = specs.goldGiven > 0 ? specs.goldGiven.toFixed(3) + ' g' : '';
+        workshopModal.querySelector('#workshop-stone-weight').textContent = specs.stoneWeight > 0 ? specs.stoneWeight.toFixed(2) + ' carats' : '';
+        workshopModal.querySelector('#workshop-gold-balance').textContent = specs.balance.toFixed(3) + ' g';
         
         const imageContainer = workshopModal.querySelector('#workshop-design-images-container');
         imageContainer.innerHTML = '';
@@ -565,29 +567,70 @@ document.addEventListener('DOMContentLoaded', function() {
     
     const generateInvoiceAction = () => {
         if (orderItems.length === 0) {
-            alert('Cannot generate an invoice with no items. Please add at least one item.');
+            alert('Cannot generate an invoice with no items.');
             return;
         }
-        const totalPrice = orderItems.reduce((sum, item) => sum + item.price, 0);
+
+        let isFinalInvoice = orderItems.some(item => item.finalWeight > 0);
+        let totalAdjustment = 0;
+
+        invoiceModal.querySelector('#invoice-title').textContent = isFinalInvoice ? 'FINAL INVOICE' : 'INVOICE';
+        
+        const itemsHtml = orderItems.map(item => {
+            let weightAdjustmentText = '';
+            if (isFinalInvoice && item.finalWeight > 0 && item.targetWeight > 0 && item.karatage && GOLD_COEFFICIENTS[item.karatage]) {
+                const diff = item.finalWeight - item.targetWeight;
+                const coeffs = GOLD_COEFFICIENTS[item.karatage];
+
+                if (diff < 0) {
+                    let credit = Math.abs(diff) * coeffs.purity * PER_GRAM_PRICE;
+                    totalAdjustment -= credit;
+                    weightAdjustmentText = ` (Credit: -LKR ${credit.toFixed(2)})`;
+                } else if (diff > 0) {
+                    let extraCost = diff * (1 + coeffs.wastage) * PER_GRAM_PRICE;
+                    totalAdjustment += extraCost;
+                    weightAdjustmentText = ` (Extra: +LKR ${extraCost.toFixed(2)})`;
+                }
+            }
+            return `
+                <tr class="border-b">
+                    <td class="p-2">${item.description}<span class="text-xs italic text-gray-500">${weightAdjustmentText}</span></td>
+                    <td class="p-2">${item.karatage || 'N/A'}</td>
+                    <td class="p-2">${(item.finalWeight > 0 ? item.finalWeight : item.targetWeight).toFixed(3)} g</td>
+                    <td class="p-2 text-right">LKR ${item.price.toFixed(2)}</td>
+                </tr>`;
+        }).join('');
+
+        const initialTotalPrice = orderItems.reduce((sum, item) => sum + item.price, 0);
+        const finalTotalPrice = initialTotalPrice + totalAdjustment;
         const oldGoldValue = parseFloat(document.getElementById('job-old-gold').value) || 0;
         const advance = parseFloat(document.getElementById('job-advance').value) || 0;
-        const balance = totalPrice - oldGoldValue - advance;
-
+        const balance = finalTotalPrice - oldGoldValue - advance;
+        
         invoiceModal.querySelector('#invoice-id').textContent = '#2514';
         invoiceModal.querySelector('#invoice-date-display').textContent = '2025-08-16';
         invoiceModal.querySelector('#invoice-customer-name').textContent = document.getElementById('job-customer-name').value;
         invoiceModal.querySelector('#invoice-customer-contact').textContent = document.getElementById('job-contact-number').value;
         invoiceModal.querySelector('#invoice-delivery-date').textContent = `Delivery by: ${document.getElementById('job-delivery-date').value}`;
+        const remark = document.getElementById('job-remark').value;
+        const remarkEl = invoiceModal.querySelector('#invoice-remark');
+        remarkEl.textContent = remark ? `Remark: ${remark}` : '';
+        remarkEl.style.display = remark ? 'block' : 'none';
         
-        invoiceModal.querySelector('#invoice-items-body').innerHTML = orderItems.map(item => `
-            <tr class="border-b">
-                <td class="p-2">${item.description}</td>
-                <td class="p-2">${item.karatage || 'N/A'}</td>
-                <td class="p-2">${item.weight ? item.weight.toFixed(3) + ' g' : 'N/A'}</td>
-                <td class="p-2 text-right">LKR ${item.price.toFixed(2)}</td>
-            </tr>`).join('');
+        invoiceModal.querySelector('#invoice-items-body').innerHTML = itemsHtml;
         
-        invoiceModal.querySelector('#invoice-total-price').textContent = `LKR ${totalPrice.toFixed(2)}`;
+        invoiceModal.querySelector('#invoice-total-price').textContent = `LKR ${initialTotalPrice.toFixed(2)}`;
+        const adjustmentRow = invoiceModal.querySelector('#invoice-adjustment-row');
+        if (isFinalInvoice && totalAdjustment !== 0) {
+            const priceAdjustmentEl = invoiceModal.querySelector('#invoice-price-adjustment');
+            priceAdjustmentEl.textContent = `LKR ${totalAdjustment.toFixed(2)}`;
+            priceAdjustmentEl.style.color = totalAdjustment > 0 ? 'red' : 'green';
+            adjustmentRow.style.display = 'flex';
+        } else {
+            adjustmentRow.style.display = 'none';
+        }
+        
+        invoiceModal.querySelector('#invoice-final-price').textContent = `LKR ${finalTotalPrice.toFixed(2)}`;
         invoiceModal.querySelector('#invoice-old-gold').textContent = `LKR ${oldGoldValue.toFixed(2)}`;
         invoiceModal.querySelector('#invoice-advance').textContent = `LKR ${advance.toFixed(2)}`;
         invoiceModal.querySelector('#invoice-balance').textContent = `LKR ${balance.toFixed(2)}`;
@@ -607,10 +650,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const getCoords = (e) => {
             const rect = signaturePadCanvas.getBoundingClientRect();
             const touch = e.touches && e.touches[0];
-            return {
-                x: (touch ? touch.clientX : e.clientX) - rect.left,
-                y: (touch ? touch.clientY : e.clientY) - rect.top
-            };
+            return { x: (touch ? touch.clientX : e.clientX) - rect.left, y: (touch ? touch.clientY : e.clientY) - rect.top };
         };
         const startDrawing = (e) => { e.preventDefault(); isDrawing = true; [lastX, lastY] = [getCoords(e).x, getCoords(e).y]; };
         const draw = (e) => {
@@ -624,15 +664,10 @@ document.addEventListener('DOMContentLoaded', function() {
             [lastX, lastY] = [x, y];
         };
         const stopDrawing = () => { isDrawing = false; };
-
         ['mousedown', 'touchstart'].forEach(event => signaturePadCanvas.addEventListener(event, startDrawing, { passive: false }));
         ['mousemove', 'touchmove'].forEach(event => signaturePadCanvas.addEventListener(event, draw, { passive: false }));
         ['mouseup', 'mouseleave', 'touchend'].forEach(event => signaturePadCanvas.addEventListener(event, stopDrawing));
-
-        document.getElementById('clear-signature-btn').addEventListener('click', () => {
-            ctx.clearRect(0, 0, signaturePadCanvas.width, signaturePadCanvas.height);
-        });
-        
+        document.getElementById('clear-signature-btn').addEventListener('click', () => { ctx.clearRect(0, 0, signaturePadCanvas.width, signaturePadCanvas.height); });
         initializeSignaturePad();
     }
 
