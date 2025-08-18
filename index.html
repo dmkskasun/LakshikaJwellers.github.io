@@ -3,69 +3,785 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lakshika Gems - Blockchain Certified Gemology</title>
-    <!-- Tailwind CSS -->
+    <title>Lakshika Jewellers - Admin Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts: Inter -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@700&family=Lora:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #ffffff;
+        body { font-family: 'Inter', sans-serif; }
+        .font-playfair { font-family: 'Playfair Display', serif; }
+        .font-lora { font-family: 'Lora', serif; }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #1a1a1a; }
+        ::-webkit-scrollbar-thumb { background: #4a4a4a; border-radius: 10px; }
+        .nav-link.active { background-color: #D4AF37; color: #111827; }
+        .nav-link.active i { color: #111827; }
+        #signature-pad { 
+            border: 2px dashed #ccc; 
+            border-radius: 0.375rem; 
+            cursor: crosshair; 
+            touch-action: none;
         }
-        .font-playfair {
-            font-family: 'Playfair Display', serif;
+
+        @media print {
+            body > :not(.is-printing) { display: none !important; }
+            html, body { height: auto !important; overflow: visible !important; background: #fff !important; font-size: 11pt; }
+            .is-printing { position: static !important; display: block !important; visibility: visible !important; padding: 0 !important; margin: 0 !important; background: none !important; }
+            .printable-area { position: static !important; width: auto !important; height: auto !important; margin: 0 !important; padding: 0 !important; border: none !important; box-shadow: none !important; color: #000; }
+            .no-print { display: none !important; }
+
+            .print-header-wrapper {
+                padding: 0.5in !important;
+                padding-bottom: 0.25in !important;
+                border-bottom: 1px solid #e5e7eb !important;
+            }
+            .print-header-container {
+                display: grid !important;
+                grid-template-columns: 1fr 1fr;
+                align-items: flex-start;
+            }
+            .company-details-print { 
+                display: block !important; 
+            }
+            .printable-area .company-details-print img {
+                width: 130px !important;
+                height: auto !important;
+                margin-bottom: 1rem !important;
+                border-radius: 0 !important;
+            }
+            .printable-area .company-details-print h2 {
+                font-size: 1.75rem !important; 
+                line-height: 1.5rem !important;
+                text-transform: uppercase;
+                margin-bottom: 0.3rem !important;
+            }
+            .printable-area .company-details-print p {
+                font-size: 0.9rem !important; 
+                line-height: 1.25rem !important;
+                margin: 0;
+            }
+            .printable-area .company-details-print .italic {
+                margin-bottom: 0.5rem !important;
+            }
+            .invoice-title-print { 
+                text-align: right !important; 
+            }
+            .printable-area .invoice-title-print h3 {
+                font-size: 2.5rem !important;
+                margin-bottom: 0.5rem !important;
+                font-weight: bold;
+                text-transform: uppercase;
+            }
+            .printable-area .invoice-title-print p {
+                font-size: 1rem !important;
+            }
+            .printable-area .p-6 { padding: 0.5in !important; }
+            .p-6 > .grid {
+                display: grid !important;
+                grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+                align-items: flex-end;
+            }
+            #signature-pad { 
+                border: none !important;
+                border-bottom: 1px solid #333 !important;
+                height: 80px !important;
+                border-radius: 0 !important;
+            }
+            h4 {
+                font-size: 0.85rem !important;
+                letter-spacing: 0.05em;
+                text-transform: uppercase;
+            }
         }
     </style>
 </head>
-<body class="text-gray-800">
-    <div class="flex flex-col md:flex-row min-h-screen">
-        <!-- Left Column -->
-        <div class="w-full md:w-1/2 flex flex-col justify-start pt-24 md:pt-0 md:justify-center p-8 lg:p-16 order-2 md:order-1">
-            <div class="max-w-md mx-auto">
-                <!-- Logo -->
-                <div class="relative w-20 h-20 mb-8">
-                    <div class="text-7xl font-black text-blue-900">L</div>
-                    <span class="absolute w-3 h-3 bg-teal-400 rounded-full top-1 left-10"></span>
-                    <span class="absolute w-2 h-2 bg-blue-500 rounded-full top-12 left-12"></span>
-                    <span class="absolute w-4 h-4 bg-gray-400 rounded-sm top-12 left-5 -rotate-12"></span>
+<body class="bg-gray-900 text-gray-200">
+
+    <div class="flex">
+        <aside id="sidebar" class="w-64 bg-gray-800 p-4 flex flex-col fixed h-full z-40 transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out no-print md:flex">
+            <div class="flex items-center justify-between mb-8">
+                <div class="flex items-center">
+                    <img src="logo.png" alt="Lakshika Jewellers Logo" class="w-12 h-12 mr-2 object-contain">
+                    <h1 class="text-xl font-bold text-white">Lakshika Jewellers</h1>
+                </div>
+                <button id="close-menu-btn" class="md:hidden text-gray-400 hover:text-white"><i class="fas fa-times text-2xl"></i></button>
+            </div>
+            <nav class="flex-grow">
+                <ul>
+                    <li><a href="#" data-view="dashboard" class="nav-link active flex items-center py-3 px-4 rounded-lg"><i class="fas fa-tachometer-alt w-6 mr-2"></i> Dashboard</a></li>
+                    <li><a href="#" data-view="job-orders" class="nav-link flex items-center py-3 px-4 rounded-lg transition duration-200 hover:bg-gray-700"><i class="fas fa-clipboard-list w-6 mr-2"></i> Job Orders</a></li>
+                </ul>
+            </nav>
+            <div class="mt-auto">
+                <a href="#" id="logout-btn" class="nav-link flex items-center py-3 px-4 rounded-lg transition duration-200 hover:bg-gray-700"><i class="fas fa-sign-out-alt w-6 mr-2"></i> Logout</a>
+            </div>
+        </aside>
+
+        <div class="flex-1 flex flex-col md:ml-64">
+            <header class="md:hidden bg-gray-800 p-4 flex justify-between items-center no-print sticky top-0 z-30">
+                <button id="menu-toggle-btn" class="text-white"><i class="fas fa-bars text-2xl"></i></button>
+                <h1 class="text-lg font-bold text-white">Lakshika Jewellers</h1>
+                <div class="w-8"></div> 
+            </header>
+
+            <main class="flex-1 p-4 md:p-8 no-print">
+                <div id="dashboard-view" class="view">
+                    <h2 class="text-3xl font-bold mb-6 text-yellow-400">Dashboard</h2>
+                    <p>Welcome to your central control board.</p>
                 </div>
                 
-                <h1 class="text-5xl md:text-6xl font-bold leading-tight tracking-tight text-gray-900">Verifying Authenticity with Blockchain</h1>
-                
-                <p class="mt-6 text-lg text-gray-600">
-                    Welcome to Lakshika Gems, Sri Lanka's first blockchain-based gemological laboratory, where tradition meets technology to ensure unparalleled trust and transparency.
-                </p>
+                <div id="job-orders-view" class="view hidden pb-32 md:pb-20"> 
+                    <h2 class="text-3xl font-bold mb-6 text-yellow-400">Create New Job Order</h2>
+                    <div class="bg-gray-800 p-4 md:p-8 rounded-xl shadow-lg">
+                        <form id="job-order-form" onsubmit="return false;">
+                            <div class="border-b border-gray-700 pb-6 mb-6">
+                                <h3 class="text-xl font-bold text-white mb-4">Customer & Invoice Details</h3>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-end">
+                                    <div>
+                                        <label for="job-customer-name" class="block text-sm font-medium text-gray-400 mb-1">Customer Name</label>
+                                        <input id="job-customer-name" type="text" class="bg-gray-700 p-3 rounded-lg w-full">
+                                    </div>
+                                    <div>
+                                        <label for="job-contact-number" class="block text-sm font-medium text-gray-400 mb-1">Contact Number</label>
+                                        <input id="job-contact-number" type="text" class="bg-gray-700 p-3 rounded-lg w-full">
+                                    </div>
+                                    <div>
+                                        <label for="job-delivery-date" class="block text-sm font-medium text-gray-400 mb-1">Delivery Date</label>
+                                        <input id="job-delivery-date" type="date" class="bg-gray-700 p-3 rounded-lg w-full text-gray-400">
+                                    </div>
+                                    <div>
+                                        <label for="job-old-gold" class="block text-sm font-medium text-gray-400 mb-1">Old Gold Value (LKR)</label>
+                                        <input id="job-old-gold" type="number" class="bg-gray-700 p-3 rounded-lg w-full">
+                                    </div>
+                                    <div>
+                                        <label for="job-advance" class="block text-sm font-medium text-gray-400 mb-1">Advance Payment (LKR)</label>
+                                        <input id="job-advance" type="number" class="bg-gray-700 p-3 rounded-lg w-full">
+                                    </div>
+                                    <div class="md:col-span-2">
+                                        <label for="job-remark" class="block text-sm font-medium text-gray-400 mb-1">Remark (For Workshop)</label>
+                                        <input id="job-remark" type="text" class="bg-gray-700 p-3 rounded-lg w-full">
+                                    </div>
+                                </div>
+                            </div>
 
-                <a href="services.html" class="mt-10 inline-block bg-blue-800 text-white font-bold py-3 px-8 rounded-full text-md hover:bg-blue-900 transition-all duration-300">
-                    Explore Our Services
-                </a>
+                            <div class="border-b border-gray-700 pb-6 mb-6">
+                                <h3 class="text-xl font-bold text-white mb-4">Order Items</h3>
+                                <div class="p-4 rounded-lg bg-gray-700/50">
+                                    <p class="text-gray-400 text-sm mb-4">Use the button below to add or edit items in the order. You can add unique workshop specifications for custom jobs.</p>
+                                    <button type="button" id="open-item-modal-btn" class="bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 px-6 rounded-lg w-full md:w-auto flex items-center justify-center">
+                                        <i class="fas fa-plus mr-2"></i> Add New Item to Order
+                                    </button>
+                                </div>
+                                <div class="mt-6 overflow-x-auto">
+                                    <table class="w-full text-sm text-left">
+                                        <thead class="text-gray-400"><tr><th class="p-2">Description</th><th class="p-2">Initial Price (LKR)</th><th class="p-2 text-right">Actions</th></tr></thead>
+                                        <tbody id="order-items-list" class="divide-y divide-gray-700"></tbody>
+                                    </table>
+                                </div>
+                            </div>
+                           
+                            <div class="mt-8 flex flex-col md:flex-row justify-end md:space-x-4 space-y-3 md:space-y-0">
+                                <button type="button" id="generate-initial-invoice-btn" class="bg-gray-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-gray-500">Generate Pro-forma Invoice</button>
+                                <button type="button" id="generate-final-invoice-btn" class="bg-yellow-400 text-gray-900 font-bold py-3 px-6 rounded-lg hover:bg-yellow-300">Generate Final Invoice</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+    
+    <div id="job-order-mobile-footer" class="fixed bottom-0 left-0 right-0 bg-gray-800 p-4 border-t border-gray-700 z-30 md:hidden hidden">
+        <div class="flex flex-col space-y-3">
+             <button type="button" id="generate-initial-invoice-btn-mobile" class="bg-gray-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-gray-500 w-full">Generate Pro-forma Invoice</button>
+             <button type="button" id="generate-final-invoice-btn-mobile" class="bg-yellow-400 text-gray-900 font-bold py-3 px-6 rounded-lg hover:bg-yellow-300 w-full">Generate Final Invoice</button>
+        </div>
+    </div>
 
-                <div class="mt-12 flex space-x-6">
-                    <a href="#" target="_blank" class="text-gray-400 hover:text-gray-800 transition-all" aria-label="LinkedIn">
-                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" clip-rule="evenodd"/></svg>
-                    </a>
-                    <a href="#" target="_blank" class="text-gray-400 hover:text-gray-800 transition-all" aria-label="Instagram">
-                       <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.85s-.012 3.584-.07 4.85c-.148 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07s-3.584-.012-4.85-.07c-3.252-.148-4.771-1.691-4.919-4.919-.058-1.265-.069-1.645-.069-4.85s.012-3.584.07-4.85c.148-3.225 1.664-4.771 4.919-4.919 1.266-.057 1.644-.069 4.85-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948s.014 3.667.072 4.947c.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072s3.667-.014 4.947-.072c4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.947s-.014-3.667-.072-4.947c-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.689-.073-4.948-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.162 6.162 6.162 6.162-2.759 6.162-6.162-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4s1.791-4 4-4 4 1.79 4 4-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44 1.441-.645 1.441-1.44-.645-1.44-1.441-1.44z"/></svg>
-                    </a>
-                    <a href="#" target="_blank" class="text-gray-400 hover:text-gray-800 transition-all" aria-label="Facebook">
-                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385h-3.038v-3.47h3.038v-2.661c0-3.004 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953h-1.513c-1.49 0-1.956.925-1.956 1.874v2.267h3.328l-.532 3.47h-2.796v8.385c5.737-.9 10.125-5.864 10.125-11.854z"/></svg>
-                    </a>
+    <div id="item-details-modal" class="hidden fixed inset-0 bg-black bg-opacity-70 flex justify-center items-center p-2 z-50 no-print">
+        <div class="modal-container bg-gray-800 text-gray-200 rounded-lg shadow-2xl w-full max-w-3xl max-h-[90vh] flex flex-col">
+            <div class="p-5 border-b border-gray-700"><h3 id="item-modal-title" class="text-2xl font-bold">Add New Item</h3></div>
+            <div class="p-6 flex-grow overflow-y-auto space-y-6">
+                <div class="border-b border-gray-700 pb-4">
+                    <h4 class="text-lg font-semibold text-yellow-400 mb-3">Invoice Details</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+                        <div class="md:col-span-4"><label class="block text-sm">Description</label><input id="modal-item-desc" type="text" class="mt-1 bg-gray-700 p-2 rounded-lg w-full"></div>
+                        <div><label class="block text-sm">Karatage</label><select id="modal-item-karatage" class="mt-1 bg-gray-700 p-2 rounded-lg w-full"><option value="">N/A</option><option value="22">22K</option><option value="21">21K</option><option value="18">18K</option><option value="16">16K</option><option value="14">14K</option><option value="9">9K</option></select></div>
+                        <div><label class="block text-sm">Target Weight (g)</label><input id="modal-item-target-weight" type="number" step="0.001" class="mt-1 bg-gray-700 p-2 rounded-lg w-full"></div>
+                        <div class="relative">
+                            <label class="block text-sm">Final Weight (g)</label>
+                            <input id="modal-item-final-weight" type="number" step="0.001" class="mt-1 bg-gray-700 p-2 rounded-lg w-full pr-10">
+                            <button type="button" class="absolute right-2 bottom-2 text-gray-400 hover:text-white take-photo-btn" data-target="finalWeight"><i class="fas fa-camera"></i></button>
+                        </div>
+                        <div><label class="block text-sm">Initial Price (LKR)</label><input id="modal-item-price" type="number" class="mt-1 bg-gray-700 p-2 rounded-lg w-full"></div>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="text-lg font-semibold text-yellow-400 mb-3">Workshop Specifications (Optional)</h4>
+                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div><label class="block text-sm">Size</label><input id="modal-ws-size" type="text" class="mt-1 bg-gray-700 p-2 rounded-lg w-full"></div>
+                        <div><label class="block text-sm">Stone Size (mm)</label><input id="modal-ws-stone-size" type="text" class="mt-1 bg-gray-700 p-2 rounded-lg w-full"></div>
+                        <div><label class="block text-sm">Dimensions (mm)</label><input id="modal-ws-dimensions" type="text" class="mt-1 bg-gray-700 p-2 rounded-lg w-full"></div>
+                        <div><label class="block text-sm">Gem Setting</label><select id="modal-ws-gem-setting" class="mt-1 bg-gray-700 p-2 rounded-lg w-full"><option value="">Select</option><option>Prong</option><option>Bezel</option><option>Pave</option></select></div>
+                        <div><label class="block text-sm">Stone Weight (carats)</label><input id="modal-ws-stone-weight" type="number" step="0.01" class="mt-1 bg-gray-700 p-2 rounded-lg w-full"></div>
+                        <div class="relative">
+                            <label class="block text-sm">Gold Given (g)</label>
+                            <input id="modal-ws-gold-given" type="number" step="0.001" class="mt-1 bg-gray-700 p-2 rounded-lg w-full pr-10">
+                            <button type="button" class="absolute right-2 bottom-2 text-gray-400 hover:text-white take-photo-btn" data-target="goldGiven"><i class="fas fa-camera"></i></button>
+                        </div>
+                        <div class="md:col-span-3 grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
+                           <div><label class="block text-sm">Allowed Wastage (g)</label><input id="modal-ws-allowed-wastage" type="text" class="mt-1 bg-gray-600 p-2 rounded-lg w-full" readonly></div>
+                           <div><label class="block text-sm">Actual Wastage (g)</label><input id="modal-ws-actual-wastage" type="number" step="0.001" class="mt-1 bg-gray-700 p-2 rounded-lg w-full"></div>
+                           <div class="relative">
+                                <label class="block text-sm">Gold Balance (g)</label>
+                                <input id="modal-ws-balance" type="text" class="mt-1 bg-gray-600 p-2 rounded-lg w-full pr-10" readonly>
+                                <button type="button" class="absolute right-2 bottom-2 text-gray-400 hover:text-white take-photo-btn" data-target="goldBalance"><i class="fas fa-camera"></i></button>
+                           </div>
+                        </div>
+                        <div class="md:col-span-3">
+                            <label class="block text-sm mt-4">Design Images</label>
+                            <input type="file" id="modal-ws-images" accept="image/*" multiple class="mt-1 block w-full text-sm text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-gray-700 file:text-yellow-300 hover:file:bg-gray-600">
+                            <div id="modal-ws-image-gallery" class="mt-4 flex flex-wrap gap-4"></div>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
-        <!-- Right Column -->
-        <div class="relative w-full md:w-1/2 order-1 md:order-2">
-            <img src="images/Image01.jpg" 
-                 onerror="this.onerror=null;this.src='https://placehold.co/900x1200/cccccc/333333?text=Lakshika+Gems';"
-                 alt="A beautiful gemstone being inspected with professional tools" 
-                 class="w-full h-screen object-cover">
-            <div class="absolute top-8 left-8">
-                <h2 class="text-gray-900 text-2xl md:text-3xl font-bold tracking-wider">LAKSHIKA GEM & LAB</h2>
+            <div class="p-4 bg-gray-900 border-t border-gray-700 flex justify-end space-x-3">
+                <button type="button" id="cancel-item-modal-btn" class="py-2 px-4 bg-gray-600 text-white rounded-lg hover:bg-gray-500">Cancel</button>
+                <button type="button" id="save-item-btn" class="py-2 px-4 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-500">Save Item</button>
             </div>
         </div>
     </div>
+    
+    <div id="camera-modal" class="hidden fixed inset-0 bg-black bg-opacity-90 flex justify-center items-center flex-col p-4 z-[60] no-print">
+        <video id="camera-feed" class="w-full max-w-lg rounded-lg mb-4" autoplay playsinline></video>
+        <div class="flex space-x-4">
+            <button id="cancel-camera-btn" class="py-2 px-4 bg-gray-600 text-white rounded-lg">Cancel</button>
+            <button id="capture-photo-btn" class="py-2 px-6 bg-blue-600 text-white font-bold rounded-full text-lg">
+                <i class="fas fa-camera"></i>
+            </button>
+        </div>
+    </div>
+
+    <div id="invoice-modal" class="hidden fixed inset-0 bg-black bg-opacity-70 flex justify-center items-center p-2 z-50">
+        <div class="modal-container printable-area bg-white text-gray-800 rounded-lg shadow-2xl w-full max-w-4xl max-h-full flex flex-col">
+            <div class="flex-grow overflow-y-auto">
+                <div class="p-4 md:p-8 border-b border-gray-200 print-header-wrapper">
+                    <div class="w-full flex justify-between items-center print-header-container">
+                        <div class="company-details-print">
+                            <img src="logo.png" alt="Lakshika Jewellers Logo" class="object-contain">
+                            <div class="font-lora">
+                                <h2 class="text-3xl font-bold text-gray-900 tracking-wide font-playfair">LAKSHIKA JEWELLERS</h2>
+                                <p class="text-md text-gray-600 italic mt-1">Where Luxury Meets Style</p>
+                                <p class="text-md text-gray-600 mt-2">No. 220B, Galle Road, Walana, Panadura.</p>
+                                <p class="text-md text-gray-600">Tel: 076-4357920, 076-6244372, 076-1576536</p>
+                            </div>
+                        </div>
+                        <div class="invoice-title-print text-right">
+                            <h3 id="invoice-title" class="text-4xl font-bold text-gray-700 font-playfair">INVOICE</h3>
+                            <p class="text-base font-lora">ID: <span id="invoice-id" class="font-mono"></span></p>
+                            <p class="text-base font-lora">Date: <span id="invoice-date-display"></span></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="p-4 md:p-6">
+                    <div class="mb-4 pt-4">
+                        <h4 class="font-bold text-gray-700 mb-2">CUSTOMER DETAILS</h4>
+                        <p id="invoice-customer-name" class="font-semibold"></p>
+                        <p id="invoice-customer-contact"></p>
+                        <p id="invoice-delivery-date" class="text-sm text-gray-600 mt-1"></p>
+                    </div>
+                    <div class="mb-4 overflow-x-auto">
+                        <table class="w-full text-sm" id="invoice-table">
+                            <thead></thead>
+                            <tbody id="invoice-items-body"></tbody>
+                        </table>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8 border-t pt-4">
+                        <div class="text-left">
+                            <h4 class="font-bold text-gray-700 mb-2">CUSTOMER SIGNATURE</h4>
+                            <canvas id="signature-pad" width="300" height="150"></canvas>
+                            <button id="clear-signature-btn" class="mt-2 text-sm text-blue-600 hover:text-blue-800 no-print">Clear Signature</button>
+                        </div>
+                        <div class="text-left md:text-right">
+                            <div class="space-y-2">
+                                   <div class="flex justify-between items-center"><p class="text-gray-600">Initial Total:</p><p id="invoice-initial-total" class="font-bold"></p></div>
+                                   <div id="invoice-adjustment-row" class="hidden flex justify-between items-center text-sm"><p class="text-gray-600">Weight Adjustments:</p><p id="invoice-price-adjustment" class="font-bold"></p></div>
+                                   <div class="flex justify-between items-center border-t pt-2 mt-2"><p class="text-gray-600 font-bold">Final Total:</p><p id="invoice-final-price" class="font-bold"></p></div>
+                                   <div class="flex justify-between items-center"><p class="text-gray-600">Old Gold Value:</p><p id="invoice-old-gold" class="font-bold"></p></div>
+                                   <div class="flex justify-between items-center"><p class="text-gray-600">Advance Payment:</p><p id="invoice-advance" class="font-bold"></p></div>
+                                   <div class="flex justify-between items-center text-xl border-t-2 border-gray-500 pt-2 mt-2"><p class="font-bold text-gray-800">BALANCE DUE:</p><p id="invoice-balance" class="font-extrabold text-yellow-600"></p></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+             <div class="p-5 bg-gray-50 border-t flex-shrink-0 flex justify-end space-x-3 no-print">
+                  <button id="close-invoice-modal-btn" class="py-2 px-4 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300">Close</button>
+                  <button id="print-invoice-btn" class="py-2 px-4 bg-blue-500 text-white font-semibold rounded-lg hover:bg-blue-600">Print Invoice</button>
+             </div>
+        </div>
+    </div>
+    <div id="workshop-modal" class="hidden fixed inset-0 bg-black bg-opacity-70 flex justify-center items-center p-2 z-50">
+        <div class="modal-container printable-area bg-white text-gray-800 rounded-lg shadow-2xl w-full max-w-2xl max-h-full flex flex-col">
+            <div class="flex-grow overflow-y-auto p-4 md:p-6">
+                <div class="text-center border-b pb-4 mb-4">
+                    <h2 class="text-2xl font-bold text-gray-900">WORKSHOP ORDER</h2>
+                    <p class="text-sm">Invoice ID: <span id="workshop-invoice-id" class="font-mono"></span> | Date: <span id="workshop-date"></span></p>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4 text-sm">
+                    <div><p class="font-bold">Item Description:</p><p id="workshop-item-desc"></p></div>
+                    <div><p class="font-bold">Karatage:</p><p id="workshop-karatage-display"></p></div>
+                    <div><p class="font-bold">Target Weight (g):</p><p id="workshop-target-weight-display"></p></div>
+                    <div><p class="font-bold">Final Weight (g):</p><p id="workshop-final-weight-display"></p></div>
+                    <div><p class="font-bold">Allowed Wastage (g):</p><p id="workshop-allowed-wastage-display"></p></div>
+                    <div><p class="font-bold">Actual Wastage (g):</p><p id="workshop-actual-wastage-display"></p></div>
+                    <div><p class="font-bold">Size:</p><p id="workshop-size"></p></div>
+                    <div><p class="font-bold">Stone Size:</p><p id="workshop-stone-size"></p></div>
+                    <div><p class="font-bold">Dimensions:</p><p id="workshop-dimensions"></p></div>
+                    <div><p class="font-bold">Gem Setting:</p><p id="workshop-gem-setting"></p></div>
+                    <div><p class="font-bold">Gold Given (g):</p><p id="workshop-gold-given"></p></div>
+                    <div><p class="font-bold">Stone Weight (carats):</p><p id="workshop-stone-weight"></p></div>
+                    <div><p class="font-bold">Gold Balance to Return (g):</p><p id="workshop-gold-balance"></p></div>
+                    <div class="col-span-1 sm:col-span-2"><p class="font-bold">Remark:</p><p id="workshop-remark"></p></div>
+                    <div class="col-span-1 sm:col-span-2">
+                        <p class="font-bold">Design Images:</p>
+                        <div id="workshop-design-images-container" class="mt-2 flex flex-wrap gap-2"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="p-5 bg-gray-50 border-t flex-shrink-0 flex justify-end space-x-3 no-print">
+                <button id="close-workshop-modal-btn" class="py-2 px-4 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300">Close</button>
+                <button id="print-workshop-btn" class="py-2 px-4 bg-blue-500 text-white font-semibold rounded-lg hover:bg-blue-600">Print Order</button>
+            </div>
+        </div>
+    </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    let orderItems = [];
+    let currentItemImages = [];
+    let currentlyEditingIndex = null;
+    let cameraStream = null;
+    let photoTarget = '';
+
+    const COEFFICIENTS = {
+        '22': { purity: 0.916, workshopWastage: 0.05625, customerWastage: 0.075 },
+        '21': { purity: 0.875, workshopWastage: 0.05625, customerWastage: 0.075 },
+        '18': { purity: 0.75,  workshopWastage: 0.075,   customerWastage: 0.1 },
+        '16': { purity: 0.66,  workshopWastage: 0.1,     customerWastage: 0.12 },
+        '14': { purity: 0.583, workshopWastage: 0.1,     customerWastage: 0.12 },
+        '9':  { purity: 0.375, workshopWastage: 0.1,     customerWastage: 0.12 }
+    };
+
+    const PER_GRAM_PRICE_24K = 23000;
+
+    const sidebar = document.getElementById('sidebar');
+    const menuToggleBtn = document.getElementById('menu-toggle-btn');
+    const closeMenuBtn = document.getElementById('close-menu-btn');
+    const navLinks = document.querySelectorAll('.nav-link');
+    const mobileFooter = document.getElementById('job-order-mobile-footer');
+    const views = document.querySelectorAll('.view');
+    const itemDetailsModal = document.getElementById('item-details-modal');
+    const openItemModalBtn = document.getElementById('open-item-modal-btn');
+    const cancelItemModalBtn = document.getElementById('cancel-item-modal-btn');
+    const saveItemBtn = document.getElementById('save-item-btn');
+    const orderItemsList = document.getElementById('order-items-list');
+    const itemModalTitle = document.getElementById('item-modal-title');
+    const cameraModal = document.getElementById('camera-modal');
+    const cameraFeed = document.getElementById('camera-feed');
+    const capturePhotoBtn = document.getElementById('capture-photo-btn');
+    const cancelCameraBtn = document.getElementById('cancel-camera-btn');
+    
+    const modalInputs = {
+        desc: document.getElementById('modal-item-desc'), karatage: document.getElementById('modal-item-karatage'),
+        targetWeight: document.getElementById('modal-item-target-weight'), finalWeight: document.getElementById('modal-item-final-weight'),
+        price: document.getElementById('modal-item-price'), wsSize: document.getElementById('modal-ws-size'),
+        wsStoneSize: document.getElementById('modal-ws-stone-size'), wsDimensions: document.getElementById('modal-ws-dimensions'),
+        wsGemSetting: document.getElementById('modal-ws-gem-setting'), wsStoneWeight: document.getElementById('modal-ws-stone-weight'),
+        wsGoldGiven: document.getElementById('modal-ws-gold-given'), wsAllowedWastage: document.getElementById('modal-ws-allowed-wastage'),
+        wsActualWastage: document.getElementById('modal-ws-actual-wastage'), wsBalance: document.getElementById('modal-ws-balance'),
+        wsImages: document.getElementById('modal-ws-images'), wsImageGallery: document.getElementById('modal-ws-image-gallery')
+    };
+    
+    const invoiceModal = document.getElementById('invoice-modal');
+    const workshopModal = document.getElementById('workshop-modal');
+
+    // --- NAVIGATION ---
+    const openSidebar = () => sidebar.classList.remove('-translate-x-full');
+    const closeSidebar = () => sidebar.classList.add('-translate-x-full');
+    if (menuToggleBtn) menuToggleBtn.addEventListener('click', openSidebar);
+    if (closeMenuBtn) closeMenuBtn.addEventListener('click', closeSidebar);
+    document.getElementById('logout-btn').addEventListener('click', (e) => { e.preventDefault(); });
+    navLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            const viewId = this.dataset.view;
+            if (!viewId) return;
+            views.forEach(view => view.classList.add('hidden'));
+            document.getElementById(viewId + '-view').classList.remove('hidden');
+            navLinks.forEach(nav => nav.classList.remove('active'));
+            this.classList.add('active');
+            if (mobileFooter) mobileFooter.classList.toggle('hidden', viewId !== 'job-orders');
+            if (window.innerWidth < 768) closeSidebar();
+        });
+    });
+
+    // --- PER-ITEM MODAL LOGIC ---
+    const resetItemModal = () => {
+        Object.values(modalInputs).forEach(input => { if (input.type !== 'file') input.value = ''; });
+        currentItemImages = [];
+        renderModalImageGallery();
+        currentlyEditingIndex = null;
+    };
+
+    const openModalForAdd = () => {
+        resetItemModal();
+        itemModalTitle.textContent = 'Add New Item';
+        saveItemBtn.textContent = 'Save Item to Order';
+        itemDetailsModal.classList.remove('hidden');
+    };
+
+    const openModalForEdit = (index) => {
+        resetItemModal();
+        const item = orderItems[index];
+        currentlyEditingIndex = index;
+        modalInputs.desc.value = item.description;
+        modalInputs.karatage.value = item.karatage;
+        modalInputs.targetWeight.value = item.targetWeight || '';
+        modalInputs.finalWeight.value = item.finalWeight || '';
+        modalInputs.price.value = item.price;
+        const specs = item.workshopSpecs;
+        modalInputs.wsSize.value = specs.size;
+        modalInputs.wsStoneSize.value = specs.stoneSize;
+        modalInputs.wsDimensions.value = specs.dimensions;
+        modalInputs.wsGemSetting.value = specs.gemSetting;
+        modalInputs.wsStoneWeight.value = specs.stoneWeight || '';
+        modalInputs.wsGoldGiven.value = specs.goldGiven || '';
+        modalInputs.wsActualWastage.value = specs.actualWastage || '';
+        calculateWastageAndBalance(); 
+        currentItemImages = [...specs.images];
+        renderModalImageGallery();
+        itemModalTitle.textContent = 'Edit Item';
+        saveItemBtn.textContent = 'Update Item';
+        itemDetailsModal.classList.remove('hidden');
+    };
+    
+    openItemModalBtn.addEventListener('click', openModalForAdd);
+    cancelItemModalBtn.addEventListener('click', () => itemDetailsModal.classList.add('hidden'));
+
+    const calculateWastageAndBalance = () => {
+        const karatage = modalInputs.karatage.value;
+        const targetWeight = parseFloat(modalInputs.targetWeight.value) || 0;
+        const finalWeight = parseFloat(modalInputs.finalWeight.value) || 0;
+        const goldGiven = parseFloat(modalInputs.wsGoldGiven.value) || 0;
+        const actualWastage = parseFloat(modalInputs.wsActualWastage.value) || 0;
+        let allowedWastage = 0;
+        if (targetWeight > 0 && COEFFICIENTS[karatage]) {
+            allowedWastage = targetWeight * COEFFICIENTS[karatage].workshopWastage;
+        }
+        modalInputs.wsAllowedWastage.value = allowedWastage > 0 ? allowedWastage.toFixed(5) : '';
+        const weightForBalance = finalWeight > 0 ? finalWeight : targetWeight;
+        const wastageForBalance = actualWastage > 0 ? actualWastage : allowedWastage;
+        const balance = goldGiven - (weightForBalance + wastageForBalance);
+        modalInputs.wsBalance.value = balance.toFixed(5);
+    };
+
+    [modalInputs.karatage, modalInputs.targetWeight, modalInputs.finalWeight, modalInputs.wsGoldGiven, modalInputs.wsActualWastage].forEach(el => el.addEventListener('input', calculateWastageAndBalance));
+
+    const renderModalImageGallery = () => {
+        modalInputs.wsImageGallery.innerHTML = '';
+        currentItemImages.forEach((imgObject, index) => {
+            const reader = new FileReader();
+            reader.onload = e => {
+                const previewWrapper = document.createElement('div');
+                previewWrapper.className = 'relative w-24 h-24';
+                previewWrapper.innerHTML = `<img src="${e.target.result}" class="w-full h-full object-cover rounded-md"><button type="button" data-index="${index}" class="remove-image-btn absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs">&times;</button>`;
+                modalInputs.wsImageGallery.appendChild(previewWrapper);
+            };
+            reader.readAsDataURL(imgObject.file);
+        });
+    };
+    modalInputs.wsImages.addEventListener('change', (e) => {
+        const uploadedFiles = Array.from(e.target.files).map(file => ({ file: file, type: 'upload' }));
+        currentItemImages.push(...uploadedFiles);
+        renderModalImageGallery();
+        e.target.value = '';
+    });
+    modalInputs.wsImageGallery.addEventListener('click', (e) => {
+        const removeBtn = e.target.closest('.remove-image-btn');
+        if (removeBtn) {
+            currentItemImages.splice(parseInt(removeBtn.dataset.index, 10), 1);
+            renderModalImageGallery();
+        }
+    });
+
+    saveItemBtn.addEventListener('click', () => {
+        const description = modalInputs.desc.value.trim();
+        const price = parseFloat(modalInputs.price.value) || 0;
+        if (!description || price <= 0) {
+            alert('A valid Description and Initial Price are required.');
+            return;
+        }
+        const isWorkshopJob = Object.values(modalInputs).some(input => input.id.startsWith('modal-ws-') && input.value.trim() !== '' && input.type !== 'file') || currentItemImages.length > 0;
+        const newItemData = {
+            description, price,
+            karatage: modalInputs.karatage.value,
+            targetWeight: parseFloat(modalInputs.targetWeight.value) || 0,
+            finalWeight: parseFloat(modalInputs.finalWeight.value) || 0,
+            isWorkshopJob,
+            workshopSpecs: {
+                size: modalInputs.wsSize.value, stoneSize: modalInputs.wsStoneSize.value,
+                dimensions: modalInputs.wsDimensions.value, gemSetting: modalInputs.wsGemSetting.value,
+                stoneWeight: parseFloat(modalInputs.wsStoneWeight.value) || 0,
+                goldGiven: parseFloat(modalInputs.wsGoldGiven.value) || 0,
+                allowedWastage: parseFloat(modalInputs.wsAllowedWastage.value) || 0,
+                actualWastage: parseFloat(modalInputs.wsActualWastage.value) || 0,
+                balance: parseFloat(modalInputs.wsBalance.value) || 0,
+                images: [...currentItemImages]
+            }
+        };
+        if (currentlyEditingIndex !== null) {
+            orderItems[currentlyEditingIndex] = newItemData;
+        } else {
+            orderItems.push(newItemData);
+        }
+        renderOrderItems();
+        itemDetailsModal.classList.add('hidden');
+    });
+
+    const renderOrderItems = () => {
+        orderItemsList.innerHTML = orderItems.length === 0 
+            ? '<tr><td colspan="3" class="text-center text-gray-500 p-4">No items in this order.</td></tr>'
+            : orderItems.map((item, index) => `
+                <tr>
+                    <td class="p-2 align-middle">${item.description} ${item.isWorkshopJob ? '<span class="text-xs bg-blue-500/50 text-blue-300 rounded-full px-2 py-1 ml-2">Custom</span>' : ''}</td>
+                    <td class="p-2 align-middle">LKR ${item.price.toFixed(2)}</td>
+                    <td class="p-2 text-right align-middle">
+                        ${item.isWorkshopJob ? `<button type="button" data-index="${index}" class="print-workshop-btn text-blue-400 hover:text-blue-300 p-2" title="Print Workshop Order"><i class="fas fa-print"></i></button>` : ''}
+                        <button type="button" data-index="${index}" class="edit-item-btn text-green-400 hover:text-green-300 p-2" title="Edit Item"><i class="fas fa-edit"></i></button>
+                        <button type="button" data-index="${index}" class="remove-item-btn text-red-400 hover:text-red-300 p-2" title="Remove Item"><i class="fas fa-trash"></i></button>
+                    </td>
+                </tr>`).join('');
+    };
+
+    orderItemsList.addEventListener('click', e => {
+        const printBtn = e.target.closest('.print-workshop-btn');
+        const editBtn = e.target.closest('.edit-item-btn');
+        const removeBtn = e.target.closest('.remove-item-btn');
+        if (printBtn) { populateAndShowWorkshopModal(parseInt(printBtn.dataset.index, 10)); }
+        if (editBtn) { openModalForEdit(parseInt(editBtn.dataset.index, 10)); }
+        if (removeBtn) {
+            orderItems.splice(parseInt(removeBtn.dataset.index, 10), 1);
+            renderOrderItems();
+        }
+    });
+    
+    const populateAndShowWorkshopModal = (itemIndex) => {
+        const item = orderItems[itemIndex];
+        if (!item || !item.isWorkshopJob) return;
+        const specs = item.workshopSpecs;
+        workshopModal.querySelector('#workshop-invoice-id').textContent = '#2514';
+        workshopModal.querySelector('#workshop-date').textContent = new Date().toLocaleDateString('en-CA');
+        const remark = document.getElementById('job-remark').value;
+        workshopModal.querySelector('#workshop-remark').textContent = remark || 'N/A';
+        workshopModal.querySelector('#workshop-item-desc').textContent = item.description;
+        workshopModal.querySelector('#workshop-karatage-display').textContent = item.karatage ? item.karatage + 'K' : 'N/A';
+        workshopModal.querySelector('#workshop-target-weight-display').textContent = item.targetWeight > 0 ? item.targetWeight.toFixed(3) + ' g' : '';
+        workshopModal.querySelector('#workshop-final-weight-display').textContent = item.finalWeight > 0 ? item.finalWeight.toFixed(3) + ' g' : '';
+        workshopModal.querySelector('#workshop-allowed-wastage-display').textContent = specs.allowedWastage > 0 ? specs.allowedWastage.toFixed(5) + ' g' : '';
+        workshopModal.querySelector('#workshop-actual-wastage-display').textContent = specs.actualWastage > 0 ? specs.actualWastage.toFixed(5) + ' g' : '';
+        workshopModal.querySelector('#workshop-size').textContent = specs.size || 'N/A';
+        workshopModal.querySelector('#workshop-stone-size').textContent = specs.stoneSize || 'N/A';
+        workshopModal.querySelector('#workshop-dimensions').textContent = specs.dimensions || 'N/A';
+        workshopModal.querySelector('#workshop-gem-setting').textContent = specs.gemSetting || 'N/A';
+        workshopModal.querySelector('#workshop-gold-given').textContent = specs.goldGiven > 0 ? specs.goldGiven.toFixed(3) + ' g' : '';
+        workshopModal.querySelector('#workshop-stone-weight').textContent = specs.stoneWeight > 0 ? specs.stoneWeight.toFixed(2) + ' carats' : '';
+        workshopModal.querySelector('#workshop-gold-balance').textContent = specs.balance ? specs.balance.toFixed(5) + ' g' : '0.000 g';
+        
+        const imageContainer = workshopModal.querySelector('#workshop-design-images-container');
+        imageContainer.innerHTML = '';
+        const designImages = specs.images.filter(img => img.type === 'upload');
+        designImages.forEach(imgObject => {
+            const reader = new FileReader();
+            reader.onload = e => imageContainer.innerHTML += `<img src="${e.target.result}" class="rounded-lg w-32 h-32 object-cover">`;
+            reader.readAsDataURL(imgObject.file);
+        });
+        workshopModal.classList.remove('hidden');
+    };
+    
+    const generateInvoice = (isFinal) => {
+        if (orderItems.length === 0) { alert('Cannot generate an invoice with no items.'); return; }
+        
+        invoiceModal.querySelector('#invoice-title').textContent = isFinal ? 'FINAL INVOICE' : 'PRO-FORMA INVOICE';
+        const tableHeader = invoiceModal.querySelector('#invoice-table thead');
+        
+        let totalAdjustment = 0;
+        const initialTotalPrice = orderItems.reduce((sum, item) => sum + item.price, 0);
+
+        tableHeader.innerHTML = `
+            <tr class="border-b">
+                <th class="p-2 text-left font-bold text-gray-600 w-2/5">DESCRIPTION</th>
+                <th class="p-2 text-left font-bold text-gray-600">KARATAGE</th>
+                <th class="p-2 text-left font-bold text-gray-600">WEIGHT</th>
+                <th class="p-2 text-right font-bold text-gray-600">PRICE (LKR)</th>
+            </tr>`;
+
+        const itemsHtml = orderItems.map(item => {
+            let itemFinalPrice = item.price;
+            let displayWeight = item.targetWeight;
+            if (isFinal && item.finalWeight > 0 && item.targetWeight > 0 && item.karatage && COEFFICIENTS[item.karatage]) {
+                const diff = item.finalWeight - item.targetWeight;
+                if (item.price > 0 && item.targetWeight > 0) {
+                    const pricePerPureGram = (item.price / item.targetWeight) / COEFFICIENTS[item.karatage].purity;
+                    let adjustment = diff * pricePerPureGram;
+                    totalAdjustment += adjustment;
+                    itemFinalPrice += adjustment;
+                }
+                displayWeight = item.finalWeight;
+            }
+
+            return `<tr class="border-b">
+                    <td class="p-2">${item.description}</td>
+                    <td class="p-2">${item.karatage ? item.karatage + 'K' : 'N/A'}</td>
+                    <td class="p-2">${displayWeight > 0 ? displayWeight.toFixed(3) + ' g' : ''}</td>
+                    <td class="p-2 text-right font-bold">LKR ${isFinal ? itemFinalPrice.toFixed(2) : item.price.toFixed(2)}</td>
+                </tr>`;
+        }).join('');
+        
+        const finalTotalPrice = initialTotalPrice + totalAdjustment;
+        const oldGoldValue = parseFloat(document.getElementById('job-old-gold').value) || 0;
+        const advance = parseFloat(document.getElementById('job-advance').value) || 0;
+        const balance = finalTotalPrice - oldGoldValue - advance;
+        
+        invoiceModal.querySelector('#invoice-id').textContent = '#2514';
+        invoiceModal.querySelector('#invoice-date-display').textContent = '2025-08-16';
+        invoiceModal.querySelector('#invoice-customer-name').textContent = document.getElementById('job-customer-name').value;
+        invoiceModal.querySelector('#invoice-customer-contact').textContent = document.getElementById('job-contact-number').value;
+        invoiceModal.querySelector('#invoice-delivery-date').textContent = `Delivery by: ${document.getElementById('job-delivery-date').value}`;
+        
+        invoiceModal.querySelector('#invoice-items-body').innerHTML = itemsHtml;
+        
+        invoiceModal.querySelector('#invoice-initial-total').textContent = `LKR ${initialTotalPrice.toFixed(2)}`;
+        const adjustmentRow = invoiceModal.querySelector('#invoice-adjustment-row');
+        if (isFinal) {
+            const priceAdjustmentEl = invoiceModal.querySelector('#invoice-price-adjustment');
+            priceAdjustmentEl.textContent = `${totalAdjustment >= 0 ? '+' : ''} LKR ${totalAdjustment.toFixed(2)}`;
+            priceAdjustmentEl.style.color = totalAdjustment >= 0 ? '#c026d3' : '#16a34a';
+            adjustmentRow.classList.remove('hidden');
+        } else {
+            adjustmentRow.classList.add('hidden');
+        }
+        
+        invoiceModal.querySelector('#invoice-final-price').textContent = `LKR ${finalTotalPrice.toFixed(2)}`;
+        invoiceModal.querySelector('#invoice-old-gold').textContent = `LKR ${oldGoldValue.toFixed(2)}`;
+        invoiceModal.querySelector('#invoice-advance').textContent = `LKR ${advance.toFixed(2)}`;
+        invoiceModal.querySelector('#invoice-balance').textContent = `LKR ${balance.toFixed(2)}`;
+        
+        invoiceModal.classList.remove('hidden');
+    };
+    
+    document.getElementById('generate-initial-invoice-btn').addEventListener('click', () => generateInvoice(false));
+    document.getElementById('generate-final-invoice-btn').addEventListener('click', () => generateInvoice(true));
+    document.getElementById('generate-initial-invoice-btn-mobile').addEventListener('click', () => generateInvoice(false));
+    document.getElementById('generate-final-invoice-btn-mobile').addEventListener('click', () => generateInvoice(true));
+    
+    // --- CAMERA LOGIC ---
+    itemDetailsModal.addEventListener('click', (e) => {
+        const photoBtn = e.target.closest('.take-photo-btn');
+        if (photoBtn) {
+            photoTarget = photoBtn.dataset.target;
+            startCamera();
+        }
+    });
+
+    const startCamera = async () => {
+        if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+            try {
+                cameraStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+                cameraFeed.srcObject = cameraStream;
+                cameraModal.classList.remove('hidden');
+            } catch (err) {
+                console.error("Error accessing camera:", err);
+                alert("Could not access the camera. Please ensure you have given permission.");
+            }
+        }
+    };
+
+    const stopCamera = () => {
+        if (cameraStream) {
+            cameraStream.getTracks().forEach(track => track.stop());
+        }
+        cameraModal.classList.add('hidden');
+    };
+
+    capturePhotoBtn.addEventListener('click', () => {
+        const canvas = document.createElement('canvas');
+        canvas.width = cameraFeed.videoWidth;
+        canvas.height = cameraFeed.videoHeight;
+        canvas.getContext('2d').drawImage(cameraFeed, 0, 0);
+        canvas.toBlob((blob) => {
+            const fileName = `${photoTarget}_${new Date().toISOString()}.jpg`;
+            const file = new File([blob], fileName, { type: 'image/jpeg' });
+            currentItemImages.push({ file: file, type: 'camera' });
+            renderModalImageGallery();
+        }, 'image/jpeg');
+        stopCamera();
+    });
+
+    cancelCameraBtn.addEventListener('click', stopCamera);
+
+    // --- SIGNATURE PAD SCRIPT ---
+    const signaturePadCanvas = document.getElementById('signature-pad');
+    if (signaturePadCanvas) {
+        const ctx = signaturePadCanvas.getContext('2d');
+        let isDrawing = false, lastX = 0, lastY = 0;
+        const initializeSignaturePad = () => Object.assign(ctx, { strokeStyle: '#000', lineWidth: 2, lineCap: 'round', lineJoin: 'round' });
+        const getCoords = (e) => {
+            const rect = signaturePadCanvas.getBoundingClientRect();
+            const touch = e.touches && e.touches[0];
+            return { x: (touch ? touch.clientX : e.clientX) - rect.left, y: (touch ? touch.clientY : e.clientY) - rect.top };
+        };
+        const startDrawing = (e) => { e.preventDefault(); isDrawing = true; [lastX, lastY] = [getCoords(e).x, getCoords(e).y]; };
+        const draw = (e) => {
+            if (!isDrawing) return;
+            e.preventDefault();
+            const { x, y } = getCoords(e);
+            ctx.beginPath();
+            ctx.moveTo(lastX, lastY);
+            ctx.lineTo(x, y);
+            ctx.stroke();
+            [lastX, lastY] = [x, y];
+        };
+        const stopDrawing = () => { isDrawing = false; };
+        ['mousedown', 'touchstart'].forEach(event => signaturePadCanvas.addEventListener(event, startDrawing, { passive: false }));
+        ['mousemove', 'touchmove'].forEach(event => signaturePadCanvas.addEventListener(event, draw, { passive: false }));
+        ['mouseup', 'mouseleave', 'touchend'].forEach(event => signaturePadCanvas.addEventListener(event, stopDrawing));
+        document.getElementById('clear-signature-btn').addEventListener('click', () => { ctx.clearRect(0, 0, signaturePadCanvas.width, signaturePadCanvas.height); });
+        initializeSignaturePad();
+    }
+
+    // --- PRINT & MODAL CLOSE CONTROLS ---
+    let isPrinting = false; 
+    const handlePrint = (modalToPrint) => {
+        if (isPrinting || !modalToPrint) return;
+        isPrinting = true;
+        modalToPrint.classList.add('is-printing');
+        window.print();
+    };
+    window.addEventListener('afterprint', () => {
+        const printedModal = document.querySelector('.is-printing');
+        if (printedModal) printedModal.classList.remove('is-printing');
+        isPrinting = false;
+    });
+
+    document.getElementById('close-invoice-modal-btn').addEventListener('click', () => invoiceModal.classList.add('hidden'));
+    document.getElementById('print-invoice-btn').addEventListener('click', () => handlePrint(invoiceModal));
+    document.getElementById('close-workshop-modal-btn').addEventListener('click', () => workshopModal.classList.add('hidden'));
+    document.getElementById('print-workshop-btn').addEventListener('click', () => handlePrint(workshopModal));
+    
+    renderOrderItems();
+});
+</script>
 </body>
 </html>
