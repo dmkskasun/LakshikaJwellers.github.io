@@ -231,12 +231,12 @@
                         </div>
                         <div class="md:col-span-3 grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
                            <div><label class="block text-sm">Allowed Wastage (g)</label><input id="modal-ws-allowed-wastage" type="text" class="mt-1 bg-gray-600 p-2 rounded-lg w-full" readonly></div>
-                           <div><label class="block text-sm">Actual Wastage (g)</label><input id="modal-ws-actual-wastage" type="number" step="0.001" class="mt-1 bg-gray-700 p-2 rounded-lg w-full"></div>
                            <div class="relative">
                                 <label class="block text-sm">Gold Balance (g)</label>
-                                <input id="modal-ws-balance" type="text" class="mt-1 bg-gray-600 p-2 rounded-lg w-full pr-10" readonly>
+                                <input id="modal-ws-balance" type="number" step="0.001" class="mt-1 bg-gray-700 p-2 rounded-lg w-full pr-10">
                                 <button type="button" class="absolute right-2 bottom-2 text-gray-400 hover:text-white take-photo-btn" data-target="goldBalance"><i class="fas fa-camera"></i></button>
                            </div>
+                           <div><label class="block text-sm">Actual Wastage (g)</label><input id="modal-ws-actual-wastage" type="text" class="mt-1 bg-gray-600 p-2 rounded-lg w-full" readonly></div>
                         </div>
                         <div class="md:col-span-3">
                             <label class="block text-sm mt-4">Design Images</label>
@@ -290,6 +290,7 @@
                         <p id="invoice-customer-name" class="font-semibold"></p>
                         <p id="invoice-customer-contact"></p>
                         <p id="invoice-delivery-date" class="text-sm text-gray-600 mt-1"></p>
+                        <p id="invoice-remark" class="text-sm text-gray-600 mt-1 hidden"></p>
                     </div>
                     <div class="mb-4 overflow-x-auto">
                         <table class="w-full text-sm" id="invoice-table">
@@ -459,6 +460,7 @@ document.addEventListener('DOMContentLoaded', function() {
         modalInputs.wsStoneWeight.value = specs.stoneWeight || '';
         modalInputs.wsGoldGiven.value = specs.goldGiven || '';
         modalInputs.wsActualWastage.value = specs.actualWastage || '';
+        modalInputs.wsBalance.value = specs.balance || '';
         calculateWastageAndBalance(); 
         currentItemImages = [...specs.images];
         renderModalImageGallery();
@@ -473,21 +475,20 @@ document.addEventListener('DOMContentLoaded', function() {
     const calculateWastageAndBalance = () => {
         const karatage = modalInputs.karatage.value;
         const targetWeight = parseFloat(modalInputs.targetWeight.value) || 0;
-        const finalWeight = parseFloat(modalInputs.finalWeight.value) || 0;
         const goldGiven = parseFloat(modalInputs.wsGoldGiven.value) || 0;
-        const actualWastage = parseFloat(modalInputs.wsActualWastage.value) || 0;
+        const goldBalance = parseFloat(modalInputs.wsBalance.value) || 0;
+
         let allowedWastage = 0;
         if (targetWeight > 0 && COEFFICIENTS[karatage]) {
             allowedWastage = targetWeight * COEFFICIENTS[karatage].workshopWastage;
         }
         modalInputs.wsAllowedWastage.value = allowedWastage > 0 ? allowedWastage.toFixed(5) : '';
-        const weightForBalance = finalWeight > 0 ? finalWeight : targetWeight;
-        const wastageForBalance = actualWastage > 0 ? actualWastage : allowedWastage;
-        const balance = goldGiven - (weightForBalance + wastageForBalance);
-        modalInputs.wsBalance.value = balance.toFixed(5);
+        
+        const actualWastage = goldGiven - goldBalance;
+        modalInputs.wsActualWastage.value = (goldGiven > 0) ? actualWastage.toFixed(5) : '';
     };
 
-    [modalInputs.karatage, modalInputs.targetWeight, modalInputs.finalWeight, modalInputs.wsGoldGiven, modalInputs.wsActualWastage].forEach(el => el.addEventListener('input', calculateWastageAndBalance));
+    [modalInputs.karatage, modalInputs.targetWeight, modalInputs.wsGoldGiven, modalInputs.wsBalance].forEach(el => el.addEventListener('input', calculateWastageAndBalance));
 
     const renderModalImageGallery = () => {
         modalInputs.wsImageGallery.innerHTML = '';
@@ -590,14 +591,14 @@ document.addEventListener('DOMContentLoaded', function() {
         workshopModal.querySelector('#workshop-target-weight-display').textContent = item.targetWeight > 0 ? item.targetWeight.toFixed(3) + ' g' : '';
         workshopModal.querySelector('#workshop-final-weight-display').textContent = item.finalWeight > 0 ? item.finalWeight.toFixed(3) + ' g' : '';
         workshopModal.querySelector('#workshop-allowed-wastage-display').textContent = specs.allowedWastage > 0 ? specs.allowedWastage.toFixed(5) + ' g' : '';
-        workshopModal.querySelector('#workshop-actual-wastage-display').textContent = specs.actualWastage > 0 ? specs.actualWastage.toFixed(5) + ' g' : '';
+        workshopModal.querySelector('#workshop-actual-wastage-display').textContent = specs.actualWastage ? specs.actualWastage.toFixed(5) + ' g' : '';
         workshopModal.querySelector('#workshop-size').textContent = specs.size || 'N/A';
         workshopModal.querySelector('#workshop-stone-size').textContent = specs.stoneSize || 'N/A';
         workshopModal.querySelector('#workshop-dimensions').textContent = specs.dimensions || 'N/A';
         workshopModal.querySelector('#workshop-gem-setting').textContent = specs.gemSetting || 'N/A';
         workshopModal.querySelector('#workshop-gold-given').textContent = specs.goldGiven > 0 ? specs.goldGiven.toFixed(3) + ' g' : '';
         workshopModal.querySelector('#workshop-stone-weight').textContent = specs.stoneWeight > 0 ? specs.stoneWeight.toFixed(2) + ' carats' : '';
-        workshopModal.querySelector('#workshop-gold-balance').textContent = specs.balance ? specs.balance.toFixed(5) + ' g' : '0.000 g';
+        workshopModal.querySelector('#workshop-gold-balance').textContent = specs.balance > 0 ? specs.balance.toFixed(5) + ' g' : '';
         
         const imageContainer = workshopModal.querySelector('#workshop-design-images-container');
         imageContainer.innerHTML = '';
