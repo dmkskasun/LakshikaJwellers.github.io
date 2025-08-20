@@ -92,6 +92,23 @@
                 letter-spacing: 0.05em;
                 text-transform: uppercase;
             }
+            
+            /* --- NEW: Larger Images for Workshop Order --- */
+            #workshop-design-images-container {
+                display: block !important;
+                margin-top: 1in !important;
+                page-break-before: always; /* Start images on a new page */
+            }
+            #workshop-design-images-container img {
+                width: 100% !important;
+                max-width: 6in !important;
+                height: auto !important;
+                max-height: 4.5in !important;
+                object-fit: contain !important;
+                margin-bottom: 0.5in !important;
+                border: 1px solid #ccc;
+                padding: 0.1in;
+            }
         }
     </style>
 </head>
@@ -376,7 +393,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
     const PER_GRAM_PRICE_24K = 23000;
 
-    // --- CACHE DOM ELEMENTS ---
     const sidebar = document.getElementById('sidebar');
     const menuToggleBtn = document.getElementById('menu-toggle-btn');
     const closeMenuBtn = document.getElementById('close-menu-btn');
@@ -486,7 +502,7 @@ document.addEventListener('DOMContentLoaded', function() {
         modalInputs.wsAllowedWastage.value = allowedWastage > 0 ? allowedWastage.toFixed(5) : '';
         
         const actualWastage = goldGiven - (finalWeight > 0 ? finalWeight : 0) - goldBalance;
-        modalInputs.wsActualWastage.value = (goldGiven > 0 && (finalWeight > 0 || goldBalance > 0)) ? actualWastage.toFixed(5) : '';
+        modalInputs.wsActualWastage.value = (goldGiven > 0) ? actualWastage.toFixed(5) : '';
     };
 
     [modalInputs.karatage, modalInputs.targetWeight, modalInputs.finalWeight, modalInputs.wsGoldGiven, modalInputs.wsBalance].forEach(el => el.addEventListener('input', calculateWastageAndBalance));
@@ -638,6 +654,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     const pricePerPureGram = (item.price / item.targetWeight) / COEFFICIENTS[item.karatage].purity;
                     let adjustment = diff * pricePerPureGram;
                     totalAdjustment += adjustment;
+                    itemFinalPrice += adjustment;
                 }
                 displayWeight = item.finalWeight;
             }
@@ -646,7 +663,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     <td class="p-2">${item.description}</td>
                     <td class="p-2">${item.karatage ? item.karatage + 'K' : 'N/A'}</td>
                     <td class="p-2">${displayWeight > 0 ? displayWeight.toFixed(3) + ' g' : ''}</td>
-                    <td class="p-2 text-right font-bold">LKR ${item.price.toFixed(2)}</td>
+                    <td class="p-2 text-right font-bold">LKR ${isFinal ? itemFinalPrice.toFixed(2) : item.price.toFixed(2)}</td>
                 </tr>`;
         }).join('');
         
